@@ -3,6 +3,10 @@ SDL2 Singleton Class, to remove the the need to include the ".LIB" files.
 
 ## Example
 ```cpp
+#include <iostream>
+#include "SDLInitializer.h"
+
+int main() {
 	CSDL::SDLInit(SDL_INIT_VIDEO);
 	if (!(CSDL::ImageInit(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		printf("IMG Initialization Error: %s\n", CSDL::ImageGetError());
@@ -40,4 +44,5 @@ SDL2 Singleton Class, to remove the the need to include the ".LIB" files.
 	CSDL::ImageQuit();
 	CSDL::SDLQuit();
 	CSDL::Release(); /* release the sdl singleton from memory */
+}
 ```
