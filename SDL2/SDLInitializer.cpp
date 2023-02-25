@@ -1,9 +1,6 @@
 #include <Windows.h>
 #include <cinttypes>
 
-#include <SDL.h>
-#include <SDL_image.h>
-
 #include "SDLInitializer.h"
 
 CSDL* CSDL::sInstance = nullptr;

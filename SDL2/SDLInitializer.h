@@ -2,6 +2,9 @@
 #define SDL_INITIALIZER_H
 #pragma once
 
+#include <SDL.h>
+#include <SDL_image.h>
+
 #define SDL_MAIN_DLL TEXT("SDL2.DLL")
 #define SDL_INIT_FUNCTION "SDL_Init"
 #define SDL_CREATEWINDOW_FUNCTION "SDL_CreateWindow"
@@ -98,24 +101,24 @@ private:
 	sdl_init_t IMG_Init;
 
 	/* sdl2 */
-	sdl_createwindow_t SDL_CreateWindow;
-	sdl_createrenderer_t SDL_CreateRenderer;
-	sdl_setrenderdrawcolor_t SDL_SetRenderDrawColor;
-	sdl_createtexturefromsurface_t SDL_CreateTextureFromSurface;
-	sdl_freesurface_t SDL_FreeSurface;
-	sdl_pollevent_t SDL_PollEvent;
-	sdl_renderclear_t SDL_RenderClear;
-	sdl_rendercopy_t SDL_RenderCopy;
-	sdl_renderpresent_t SDL_RenderPresent;
-	sdl_destroytexture_t SDL_DestroyTexture;
-	sdl_destroyrenderer_t SDL_DestroyRenderer;
-	sdl_destroywindow_t SDL_DestroyWindow;
-	sdl_quit_t SDL_Quit;
-	sdl_geterror_t SDL_GetError;
+	sdl_createwindow_t SDL_CreateWindow = nullptr;
+	sdl_createrenderer_t SDL_CreateRenderer = nullptr;
+	sdl_setrenderdrawcolor_t SDL_SetRenderDrawColor = nullptr;
+	sdl_createtexturefromsurface_t SDL_CreateTextureFromSurface = nullptr;
+	sdl_freesurface_t SDL_FreeSurface = nullptr;
+	sdl_pollevent_t SDL_PollEvent = nullptr;
+	sdl_renderclear_t SDL_RenderClear = nullptr;
+	sdl_rendercopy_t SDL_RenderCopy = nullptr;
+	sdl_renderpresent_t SDL_RenderPresent = nullptr;
+	sdl_destroytexture_t SDL_DestroyTexture = nullptr;
+	sdl_destroyrenderer_t SDL_DestroyRenderer = nullptr;
+	sdl_destroywindow_t SDL_DestroyWindow = nullptr;
+	sdl_quit_t SDL_Quit = nullptr;
+	sdl_geterror_t SDL_GetError = nullptr;
 
 	/* Image */
-	sdl_loadimage_t IMG_Load;
-	sdl_quit_t IMG_Quit;
+	sdl_loadimage_t IMG_Load = nullptr;
+	sdl_quit_t IMG_Quit = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
