@@ -97,8 +97,8 @@ public:
 	static SDL_Surface* ImageLoad(const char* file);
 private:
 	/* SDL2 Initialization calls */
-	sdl_init_t SDL_Init;
-	sdl_init_t IMG_Init;
+	sdl_init_t SDL_Init = nullptr;
+	sdl_init_t IMG_Init = nullptr;
 
 	/* sdl2 */
 	sdl_createwindow_t SDL_CreateWindow = nullptr;
