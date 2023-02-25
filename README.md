@@ -39,4 +39,5 @@ SDL2 Singleton Class, to remove the the need to include the ".LIB" files.
 
 	CSDL::ImageQuit();
 	CSDL::SDLQuit();
+	CSDL::Release(); /* release the sdl singleton from memory */
 ```
