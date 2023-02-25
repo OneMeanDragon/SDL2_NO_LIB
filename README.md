@@ -44,5 +44,6 @@ int main() {
 	CSDL::ImageQuit();
 	CSDL::SDLQuit();
 	CSDL::Release(); /* release the sdl singleton from memory */
+	return 0;
 }
 ```
