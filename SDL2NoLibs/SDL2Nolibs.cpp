@@ -50,6 +50,7 @@ CSDL::CSDL() {
 		SDL_GetKeyboardState = (sdl_getkeyboardstate_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETKEYBOARDSTATE_FUNCTION);
 		SDL_GetMouseState = (sdl_getmousestate_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETMOUSESTATE_FUNCTION);
 		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
+		SDL_RenderFillRect = (sdl_renderfillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERFILLRECT_FUNCTION);
 
 		IsInitialized = true;
 	}
@@ -175,3 +176,68 @@ SDL_RWops* CSDL::RWFromFile(const char* file, const char* mode)
 {
 	return Instance()->SDL_RWFromFile(file, mode);
 }
+
+int32_t CSDL::RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect)
+{
+	return Instance()->SDL_RenderFillRect(renderer, rect);
+}
+
+
+#pragma region "TIMER"
+Timer* Timer::sInstance = NULL;
+
+Timer* Timer::Instance() {
+
+	//Create a new instance of Timer if no instance was created before
+	if (sInstance == NULL)
+		sInstance = new Timer();
+
+	return sInstance;
+}
+
+void Timer::Release() {
+
+	delete sInstance;
+	sInstance = NULL;
+}
+
+Timer::Timer() {
+
+	//Using Reset to initialize all the values beside mTimeScale
+	Reset();
+	mTimeScale = 1.0f;
+}
+
+Timer::~Timer() {
+
+}
+
+void Timer::Reset() {
+
+	mStartTicks = CSDL::GetTicks();
+	mElapsedTicks = 0;
+	mDelataTime = 0.0f;
+}
+
+float Timer::DeltaTime() {
+
+	return mDelataTime;
+}
+
+void Timer::TimeScale(float t) {
+
+	mTimeScale = t;
+}
+
+float Timer::TimeScale() {
+
+	return mTimeScale;
+}
+
+void Timer::Update() {
+
+	mElapsedTicks = CSDL::GetTicks() - mStartTicks;
+	//Converting milliseconds to seconds
+	mDelataTime = mElapsedTicks * 0.001f;
+}
+#pragma endregion

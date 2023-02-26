@@ -40,9 +40,10 @@
 #define SDL_GETKEYBOARDSTATE_FUNCTION "SDL_GetKeyboardState"
 #define SDL_GETMOUSESTATE_FUNCTION "SDL_GetMouseState"
 #define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
+#define SDL_RENDERFILLRECT_FUNCTION "SDL_RenderFillRect"
 
 /*
-extern DECLSPEC SDL_RWops *SDLCALL SDL_RWFromFile(const char *file, const char *mode);
+extern DECLSPEC int SDLCALL SDL_RenderFillRect(SDL_Renderer * renderer, const SDL_Rect * rect);
 */
 
 typedef int32_t(*sdl_init_t)(uint32_t flags);
@@ -68,6 +69,7 @@ typedef int32_t(*sdl_querytexture_t)(SDL_Texture* texture, uint32_t* format, int
 typedef const uint8_t*(*sdl_getkeyboardstate_t)(int32_t* numkeys);
 typedef uint32_t(*sdl_getmousestate_t)(int32_t* x, int32_t* y);
 typedef SDL_RWops*(*sdl_rwfromfile_t)(const char* file, const char* mode);
+typedef int32_t(*sdl_renderfillrect_t)(SDL_Renderer* renderer, const SDL_Rect* rect);
 
 class CSDL {
 private:
@@ -109,6 +111,8 @@ public:
 	static uint32_t GetMouseState(int32_t* x, int32_t* y);
 	static SDL_RWops* RWFromFile(const char* file, const char* mode);
 
+	static int32_t RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect);
+
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t SDL_Init = nullptr;
@@ -136,11 +140,76 @@ private:
 	sdl_getkeyboardstate_t SDL_GetKeyboardState = nullptr;
 	sdl_getmousestate_t SDL_GetMouseState = nullptr;
 	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
+	sdl_renderfillrect_t SDL_RenderFillRect = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
 };
 
+#pragma region "TIMER"
+class Timer {
 
+private:
+	//Needed to make Timer a singleton class
+	static Timer* sInstance;
+
+	//Contains the time of the last reset
+	unsigned int mStartTicks;
+	//Stores the number of milliseconds since the last reset
+	unsigned int mElapsedTicks;
+	//Stores the time elapsed since the last reset in seconds
+	float mDelataTime;
+	//Can be used to speed up or slowdown all entities that transform using it
+	float mTimeScale;
+
+public:
+	//-----------------------------------------
+	//Returns a pointer to the class instance  
+	//-----------------------------------------
+	static Timer* Instance();
+	//-----------------------------------------------------
+	//Releases the class instance and sets it back to NULL 
+	//-----------------------------------------------------
+	static void Release();
+
+	//------------------------------------------------------------------------
+	//Resets the time elapsed back to 0, is usually called after each frame
+	//so that mDeltaTime is the time elapsed since last frame
+	//------------------------------------------------------------------------
+	void Reset();
+
+	//-------------------------------------------------------
+	//Time elapsed in seconds since the last Reset
+	//-------------------------------------------------------
+	float DeltaTime();
+
+	//---------------------------------------------------------------
+	//Sets the TimeScale default value: 1.0f
+	//---------------------------------------------------------------
+	void TimeScale(float t = 1.0f);
+	//---------------------------------------------------------------
+	//Can be used to speed up or slowdown all transformations
+	//by multiplying it by the change in position or rotation
+	//---------------------------------------------------------------
+	float TimeScale();
+
+	//--------------------------------------------------------------------
+	//Should be called in the EarlyUpdate, updates the time elapsed,
+	//as well as the DeltaTime since the last Reset
+	//--------------------------------------------------------------------
+	void Update();
+
+private:
+
+	//------------------------------------------------------------------------------------------
+	//Contructor is private so that Instance() must be used to get an instance when needed  
+	//------------------------------------------------------------------------------------------
+	Timer();
+	//--------------------------------------------------------------------------------------
+	//Destructor is private so that the instance can only be destroyed using Release()  
+	//--------------------------------------------------------------------------------------
+	~Timer();
+}; 
+#pragma endregion
 
 #endif
