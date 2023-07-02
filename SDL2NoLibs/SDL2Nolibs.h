@@ -41,6 +41,9 @@
 #define SDL_GETMOUSESTATE_FUNCTION "SDL_GetMouseState"
 #define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
 #define SDL_RENDERFILLRECT_FUNCTION "SDL_RenderFillRect"
+#define SDL_GETPERFORMANCECOUNTER "SDL_GetPerformanceCounter"
+#define SDL_GETPERFORMANCEFREQUENCY "SDL_GetPerformanceFrequency"
+#define SDL_DELAY "SDL_Delay"
 
 /*
 extern DECLSPEC int SDLCALL SDL_RenderFillRect(SDL_Renderer * renderer, const SDL_Rect * rect);
@@ -66,10 +69,13 @@ typedef int32_t(*sdl_rendercopyex_t)(SDL_Renderer* renderer, SDL_Texture* textur
 typedef int32_t(*sdl_renderdrawline_t)(SDL_Renderer* renderer, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
 typedef uint32_t(*sdl_getticks_t)(void);
 typedef int32_t(*sdl_querytexture_t)(SDL_Texture* texture, uint32_t* format, int32_t* access, int32_t* w, int32_t* h);
-typedef const uint8_t*(*sdl_getkeyboardstate_t)(int32_t* numkeys);
+typedef const uint8_t* (*sdl_getkeyboardstate_t)(int32_t* numkeys);
 typedef uint32_t(*sdl_getmousestate_t)(int32_t* x, int32_t* y);
-typedef SDL_RWops*(*sdl_rwfromfile_t)(const char* file, const char* mode);
+typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
 typedef int32_t(*sdl_renderfillrect_t)(SDL_Renderer* renderer, const SDL_Rect* rect);
+typedef uint64_t(*sdl_getperformancecounter)();
+typedef uint64_t(*sdl_getperformancefrequency)();
+typedef void(*sdl_delay)(uint32_t);
 
 class CSDL {
 private:
@@ -113,6 +119,11 @@ public:
 
 	static int32_t RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect);
 
+	// Delta timeing
+	static uint64_t GetPerformanceCounter();
+	static uint64_t GetPerformanceFrequency();
+	static void Delay(uint32_t ms);
+
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t SDL_Init = nullptr;
@@ -141,75 +152,78 @@ private:
 	sdl_getmousestate_t SDL_GetMouseState = nullptr;
 	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
 	sdl_renderfillrect_t SDL_RenderFillRect = nullptr;
+	sdl_getperformancecounter SDL_GetPerformanceCounter = nullptr;
+	sdl_getperformancefrequency SDL_GetPerformanceFrequency = nullptr;
+	sdl_delay SDL_Delay = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
 };
 
-#pragma region "TIMER"
-class Timer {
-
-private:
-	//Needed to make Timer a singleton class
-	static Timer* sInstance;
-
-	//Contains the time of the last reset
-	unsigned int mStartTicks;
-	//Stores the number of milliseconds since the last reset
-	unsigned int mElapsedTicks;
-	//Stores the time elapsed since the last reset in seconds
-	float mDelataTime;
-	//Can be used to speed up or slowdown all entities that transform using it
-	float mTimeScale;
-
-public:
-	//-----------------------------------------
-	//Returns a pointer to the class instance  
-	//-----------------------------------------
-	static Timer* Instance();
-	//-----------------------------------------------------
-	//Releases the class instance and sets it back to NULL 
-	//-----------------------------------------------------
-	static void Release();
-
-	//------------------------------------------------------------------------
-	//Resets the time elapsed back to 0, is usually called after each frame
-	//so that mDeltaTime is the time elapsed since last frame
-	//------------------------------------------------------------------------
-	void Reset();
-
-	//-------------------------------------------------------
-	//Time elapsed in seconds since the last Reset
-	//-------------------------------------------------------
-	float DeltaTime();
-
-	//---------------------------------------------------------------
-	//Sets the TimeScale default value: 1.0f
-	//---------------------------------------------------------------
-	void TimeScale(float t = 1.0f);
-	//---------------------------------------------------------------
-	//Can be used to speed up or slowdown all transformations
-	//by multiplying it by the change in position or rotation
-	//---------------------------------------------------------------
-	float TimeScale();
-
-	//--------------------------------------------------------------------
-	//Should be called in the EarlyUpdate, updates the time elapsed,
-	//as well as the DeltaTime since the last Reset
-	//--------------------------------------------------------------------
-	void Update();
-
-private:
-
-	//------------------------------------------------------------------------------------------
-	//Contructor is private so that Instance() must be used to get an instance when needed  
-	//------------------------------------------------------------------------------------------
-	Timer();
-	//--------------------------------------------------------------------------------------
-	//Destructor is private so that the instance can only be destroyed using Release()  
-	//--------------------------------------------------------------------------------------
-	~Timer();
-}; 
-#pragma endregion
+//#pragma region "TIMER"
+//class Timer {
+//
+//private:
+//	//Needed to make Timer a singleton class
+//	static Timer* sInstance;
+//
+//	//Contains the time of the last reset
+//	unsigned int mStartTicks;
+//	//Stores the number of milliseconds since the last reset
+//	unsigned int mElapsedTicks;
+//	//Stores the time elapsed since the last reset in seconds
+//	float mDelataTime;
+//	//Can be used to speed up or slowdown all entities that transform using it
+//	float mTimeScale;
+//
+//public:
+//	//-----------------------------------------
+//	//Returns a pointer to the class instance  
+//	//-----------------------------------------
+//	static Timer* Instance();
+//	//-----------------------------------------------------
+//	//Releases the class instance and sets it back to NULL 
+//	//-----------------------------------------------------
+//	static void Release();
+//
+//	//------------------------------------------------------------------------
+//	//Resets the time elapsed back to 0, is usually called after each frame
+//	//so that mDeltaTime is the time elapsed since last frame
+//	//------------------------------------------------------------------------
+//	void Reset();
+//
+//	//-------------------------------------------------------
+//	//Time elapsed in seconds since the last Reset
+//	//-------------------------------------------------------
+//	float DeltaTime();
+//
+//	//---------------------------------------------------------------
+//	//Sets the TimeScale default value: 1.0f
+//	//---------------------------------------------------------------
+//	void TimeScale(float t = 1.0f);
+//	//---------------------------------------------------------------
+//	//Can be used to speed up or slowdown all transformations
+//	//by multiplying it by the change in position or rotation
+//	//---------------------------------------------------------------
+//	float TimeScale();
+//
+//	//--------------------------------------------------------------------
+//	//Should be called in the EarlyUpdate, updates the time elapsed,
+//	//as well as the DeltaTime since the last Reset
+//	//--------------------------------------------------------------------
+//	void Update();
+//
+//private:
+//
+//	//------------------------------------------------------------------------------------------
+//	//Contructor is private so that Instance() must be used to get an instance when needed  
+//	//------------------------------------------------------------------------------------------
+//	Timer();
+//	//--------------------------------------------------------------------------------------
+//	//Destructor is private so that the instance can only be destroyed using Release()  
+//	//--------------------------------------------------------------------------------------
+//	~Timer();
+//};
+//#pragma endregion
 
 #endif
