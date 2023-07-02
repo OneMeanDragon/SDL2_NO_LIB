@@ -13,8 +13,10 @@ CSDL* CSDL::Instance() {
 void CSDL::Release()
 {
 	/* if anything else needs to be destroyed before this then do it above the instance deleteion */
-	delete sInstance;
-	sInstance = nullptr;
+	if (sInstance != nullptr) {
+		delete sInstance;
+		sInstance = nullptr;
+	}
 }
 
 CSDL::CSDL() {
@@ -52,6 +54,11 @@ CSDL::CSDL() {
 		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
 		SDL_RenderFillRect = (sdl_renderfillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERFILLRECT_FUNCTION);
 
+		// DeltaTime (SDL_GetPerformanceCounter & SDL_GetPerformanceFrequency & SDL_Delay)
+		SDL_GetPerformanceCounter = (sdl_getperformancecounter)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCECOUNTER);
+		SDL_GetPerformanceFrequency = (sdl_getperformancefrequency)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCEFREQUENCY);
+		SDL_Delay = (sdl_delay)GetProcAddress(SDL_LOADED_DLL, SDL_DELAY);
+
 		IsInitialized = true;
 	}
 }
@@ -69,14 +76,33 @@ int32_t CSDL::Init(uint32_t dwFlag) {
 
 void CSDL::Quit(void)
 {
-	Instance()->SDL_Quit();
-	return Instance()->Release();
+	if (sInstance != nullptr) {
+		Instance()->SDL_Quit();
+		return Instance()->Release();
+	}
+	return;
 }
 
 const char* CSDL::GetError(void)
 {
 	return Instance()->SDL_GetError();
 }
+
+uint64_t CSDL::GetPerformanceCounter() {
+	return Instance()->SDL_GetPerformanceCounter();
+}
+
+uint64_t CSDL::GetPerformanceFrequency() {
+	return Instance()->SDL_GetPerformanceFrequency();
+}
+
+void CSDL::Delay(uint32_t ms) {
+	return Instance()->SDL_Delay(ms);
+}
+
+//void asdf() {
+//	SDL_SetVideoMode();
+//}
 
 SDL_Window* CSDL::CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags)
 {
@@ -183,61 +209,61 @@ int32_t CSDL::RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect)
 }
 
 
-#pragma region "TIMER"
-Timer* Timer::sInstance = NULL;
-
-Timer* Timer::Instance() {
-
-	//Create a new instance of Timer if no instance was created before
-	if (sInstance == NULL)
-		sInstance = new Timer();
-
-	return sInstance;
-}
-
-void Timer::Release() {
-
-	delete sInstance;
-	sInstance = NULL;
-}
-
-Timer::Timer() {
-
-	//Using Reset to initialize all the values beside mTimeScale
-	Reset();
-	mTimeScale = 1.0f;
-}
-
-Timer::~Timer() {
-
-}
-
-void Timer::Reset() {
-
-	mStartTicks = CSDL::GetTicks();
-	mElapsedTicks = 0;
-	mDelataTime = 0.0f;
-}
-
-float Timer::DeltaTime() {
-
-	return mDelataTime;
-}
-
-void Timer::TimeScale(float t) {
-
-	mTimeScale = t;
-}
-
-float Timer::TimeScale() {
-
-	return mTimeScale;
-}
-
-void Timer::Update() {
-
-	mElapsedTicks = CSDL::GetTicks() - mStartTicks;
-	//Converting milliseconds to seconds
-	mDelataTime = mElapsedTicks * 0.001f;
-}
-#pragma endregion
+//#pragma region "TIMER"
+//Timer* Timer::sInstance = NULL;
+//
+//Timer* Timer::Instance() {
+//
+//	//Create a new instance of Timer if no instance was created before
+//	if (sInstance == NULL)
+//		sInstance = new Timer();
+//
+//	return sInstance;
+//}
+//
+//void Timer::Release() {
+//
+//	delete sInstance;
+//	sInstance = NULL;
+//}
+//
+//Timer::Timer() {
+//
+//	//Using Reset to initialize all the values beside mTimeScale
+//	Reset();
+//	mTimeScale = 1.0f;
+//}
+//
+//Timer::~Timer() {
+//
+//}
+//
+//void Timer::Reset() {
+//
+//	mStartTicks = CSDL::GetTicks();
+//	mElapsedTicks = 0;
+//	mDelataTime = 0.0f;
+//}
+//
+//float Timer::DeltaTime() {
+//
+//	return mDelataTime;
+//}
+//
+//void Timer::TimeScale(float t) {
+//
+//	mTimeScale = t;
+//}
+//
+//float Timer::TimeScale() {
+//
+//	return mTimeScale;
+//}
+//
+//void Timer::Update() {
+//
+//	mElapsedTicks = CSDL::GetTicks() - mStartTicks;
+//	//Converting milliseconds to seconds
+//	mDelataTime = mElapsedTicks * 0.001f;
+//}
+//#pragma endregion
