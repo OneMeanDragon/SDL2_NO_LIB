@@ -4,6 +4,10 @@ SDL2 Singleton Class's, to remove the the need to include the ".LIB" files.
 # Includes 
 Currently what I actually use from the SDL2 dlls, so if your looking for a specific function add it.
 
+## Info
+You must still follow the SDL rules, Each of the classes need to be initalized in the same thread.
+Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly the sdl mixer dll).
+
 ### The _"SDL2" folder in here can be ignored unless you just want the basic window lol_
   - SDL2(NoLibs)
   - SDL2_Image
