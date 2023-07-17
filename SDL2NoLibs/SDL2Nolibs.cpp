@@ -51,13 +51,17 @@ CSDL::CSDL() {
 
 		SDL_GetKeyboardState = (sdl_getkeyboardstate_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETKEYBOARDSTATE_FUNCTION);
 		SDL_GetMouseState = (sdl_getmousestate_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETMOUSESTATE_FUNCTION);
-		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
 		SDL_RenderFillRect = (sdl_renderfillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERFILLRECT_FUNCTION);
 
 		// DeltaTime (SDL_GetPerformanceCounter & SDL_GetPerformanceFrequency & SDL_Delay)
 		SDL_GetPerformanceCounter = (sdl_getperformancecounter)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCECOUNTER);
 		SDL_GetPerformanceFrequency = (sdl_getperformancefrequency)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCEFREQUENCY);
 		SDL_Delay = (sdl_delay)GetProcAddress(SDL_LOADED_DLL, SDL_DELAY);
+
+		// Memory Func
+		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
+		SDL_RWFromMem = (sdl_rwfrommem_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMMEM_FUNCTION);
+		SDL_RWFromConstMem = (sdl_rwfromconstmem_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMCONSTMEM_FUNCTION);
 
 		IsInitialized = true;
 	}
@@ -198,16 +202,27 @@ uint32_t CSDL::GetMouseState(int32_t* x, int32_t* y)
 	return Instance()->SDL_GetMouseState(x, y);
 }
 
-SDL_RWops* CSDL::RWFromFile(const char* file, const char* mode)
-{
-	return Instance()->SDL_RWFromFile(file, mode);
-}
-
 int32_t CSDL::RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect)
 {
 	return Instance()->SDL_RenderFillRect(renderer, rect);
 }
 
+#pragma region "Memory Func"
+SDL_RWops* CSDL::RWFromFile(const char* file, const char* mode)
+{
+	return Instance()->SDL_RWFromFile(file, mode);
+}
+
+SDL_RWops* CSDL::RWFromMem(void* mem, int size)
+{
+	return Instance()->SDL_RWFromMem(mem, size);
+}
+
+SDL_RWops* CSDL::RWFromConstMem(const void* mem, int size)
+{
+	return Instance()->SDL_RWFromConstMem(mem, size);
+}
+#pragma endregion
 
 //#pragma region "TIMER"
 //Timer* Timer::sInstance = NULL;
