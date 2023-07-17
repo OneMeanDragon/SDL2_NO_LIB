@@ -27,6 +27,7 @@ CTTF::CTTF() {
 		TTF_RenderText_Solid = (sdl_rendertext_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERTEXT_SOLID_FUNCTION);
 		TTF_CloseFont = (ttf_closefont_t)GetProcAddress(TTF_LOADED_DLL, TTF_CLOSEFONT_FUNCTION);
 		TTF_OpenFont = (ttf_openfont_t)GetProcAddress(TTF_LOADED_DLL, TTF_OPENFONT_FUNCTION);
+		TTF_OpenFontRW = (ttf_openfontrw_t)GetProcAddress(TTF_LOADED_DLL, TTF_OPENFONTRW_FUNCTION);
 
 		IsInitialized = true;
 	}
@@ -67,4 +68,9 @@ void CTTF::CloseFont(TTF_Font* font)
 TTF_Font* CTTF::OpenFont(const char* file, int32_t ptsize)
 {
 	return Instance()->TTF_OpenFont(file, ptsize);
+}
+
+TTF_Font* CTTF::OpenFontRW(SDL_RWops* src, int freesrc, int ptsize)
+{
+	return Instance()->TTF_OpenFontRW(src, freesrc, ptsize);
 }
