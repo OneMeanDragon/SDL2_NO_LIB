@@ -39,11 +39,16 @@
 #define SDL_QUERYTEXTURE_FUNCTION "SDL_QueryTexture"
 #define SDL_GETKEYBOARDSTATE_FUNCTION "SDL_GetKeyboardState"
 #define SDL_GETMOUSESTATE_FUNCTION "SDL_GetMouseState"
-#define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
 #define SDL_RENDERFILLRECT_FUNCTION "SDL_RenderFillRect"
 #define SDL_GETPERFORMANCECOUNTER "SDL_GetPerformanceCounter"
 #define SDL_GETPERFORMANCEFREQUENCY "SDL_GetPerformanceFrequency"
 #define SDL_DELAY "SDL_Delay"
+
+/* Memory Func */
+#define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
+#define SDL_RWFROMMEM_FUNCTION "SDL_RWFromMem"
+#define SDL_RWFROMCONSTMEM_FUNCTION "SDL_RWFromConstMem"
+
 
 /*
 extern DECLSPEC int SDLCALL SDL_RenderFillRect(SDL_Renderer * renderer, const SDL_Rect * rect);
@@ -71,11 +76,15 @@ typedef uint32_t(*sdl_getticks_t)(void);
 typedef int32_t(*sdl_querytexture_t)(SDL_Texture* texture, uint32_t* format, int32_t* access, int32_t* w, int32_t* h);
 typedef const uint8_t* (*sdl_getkeyboardstate_t)(int32_t* numkeys);
 typedef uint32_t(*sdl_getmousestate_t)(int32_t* x, int32_t* y);
-typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
 typedef int32_t(*sdl_renderfillrect_t)(SDL_Renderer* renderer, const SDL_Rect* rect);
 typedef uint64_t(*sdl_getperformancecounter)();
 typedef uint64_t(*sdl_getperformancefrequency)();
 typedef void(*sdl_delay)(uint32_t);
+// Memory functions
+typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
+typedef SDL_RWops* (*sdl_rwfrommem_t)(void* mem, int size);
+typedef SDL_RWops* (*sdl_rwfromconstmem_t)(const void* mem, int size);
+
 
 class CSDL {
 private:
@@ -115,7 +124,6 @@ public:
 
 	static const uint8_t* GetKeyboardState(int32_t* numkeys);
 	static uint32_t GetMouseState(int32_t* x, int32_t* y);
-	static SDL_RWops* RWFromFile(const char* file, const char* mode);
 
 	static int32_t RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect);
 
@@ -123,6 +131,11 @@ public:
 	static uint64_t GetPerformanceCounter();
 	static uint64_t GetPerformanceFrequency();
 	static void Delay(uint32_t ms);
+
+	// Memory func
+	static SDL_RWops* RWFromFile(const char* file, const char* mode);
+	static SDL_RWops* RWFromMem(void* mem, int size);
+	static SDL_RWops* RWFromConstMem(const void* mem, int size);
 
 private:
 	/* SDL2 Initialization calls */
@@ -150,15 +163,19 @@ private:
 	sdl_querytexture_t SDL_QueryTexture = nullptr;
 	sdl_getkeyboardstate_t SDL_GetKeyboardState = nullptr;
 	sdl_getmousestate_t SDL_GetMouseState = nullptr;
-	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
 	sdl_renderfillrect_t SDL_RenderFillRect = nullptr;
 	sdl_getperformancecounter SDL_GetPerformanceCounter = nullptr;
 	sdl_getperformancefrequency SDL_GetPerformanceFrequency = nullptr;
 	sdl_delay SDL_Delay = nullptr;
+	//memory func
+	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
+	sdl_rwfrommem_t SDL_RWFromMem = nullptr;
+	sdl_rwfromconstmem_t SDL_RWFromConstMem = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
 };
+
 
 //#pragma region "TIMER"
 //class Timer {
