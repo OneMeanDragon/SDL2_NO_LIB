@@ -18,6 +18,11 @@
 #define TTF_RENDERTEXT_SOLID_FUNCTION "TTF_RenderText_Solid"
 #define TTF_CLOSEFONT_FUNCTION "TTF_CloseFont"
 #define TTF_OPENFONT_FUNCTION "TTF_OpenFont"
+#define TTF_OPENFONTRW_FUNCTION "TTF_OpenFontRW"
+// Memory Func
+//TTF_OpenFontRW
+
+//extern DECLSPEC TTF_Font* SDLCALL TTF_OpenFontRW(SDL_RWops* src, int freesrc, int ptsize);
 
 /*
 extern DECLSPEC TTF_Font * SDLCALL TTF_OpenFont(const char *file, int ptsize);
@@ -27,6 +32,7 @@ typedef void(*sdl_quit_t)(void);
 typedef SDL_Surface* (*sdl_rendertext_solid_t)(TTF_Font* font, const char* text, SDL_Color fg);
 typedef void(*ttf_closefont_t)(TTF_Font* font);
 typedef TTF_Font* (*ttf_openfont_t)(const char* file, int32_t ptsize);
+typedef TTF_Font* (*ttf_openfontrw_t)(SDL_RWops* src, int freesrc, int ptsize);
 
 class CTTF {
 private:
@@ -48,6 +54,7 @@ public:
 	static SDL_Surface* RenderText_Solid(TTF_Font* font, const char* text, SDL_Color fg);
 	static void CloseFont(TTF_Font* font);
 	static TTF_Font* OpenFont(const char* file, int32_t ptsize);
+	static TTF_Font* OpenFontRW(SDL_RWops* src, int freesrc, int ptsize);
 
 private:
 	sdl_ttfinit_t TTF_Init = nullptr;
@@ -56,6 +63,7 @@ private:
 	sdl_rendertext_solid_t TTF_RenderText_Solid = nullptr;
 	ttf_closefont_t TTF_CloseFont = nullptr;
 	ttf_openfont_t TTF_OpenFont = nullptr;
+	ttf_openfontrw_t TTF_OpenFontRW = nullptr;
 
 private:
 	HINSTANCE TTF_LOADED_DLL;
