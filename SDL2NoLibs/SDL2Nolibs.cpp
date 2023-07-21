@@ -26,7 +26,6 @@ CSDL::CSDL() {
 		SDL_Init = (sdl_init_t)GetProcAddress(SDL_LOADED_DLL, SDL_INIT_FUNCTION);
 		SDL_Quit = (sdl_quit_t)GetProcAddress(SDL_LOADED_DLL, SDL_QUIT_FUNCTION);
 		SDL_CreateWindow = (sdl_createwindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATEWINDOW_FUNCTION);
-		SDL_CreateRenderer = (sdl_createrenderer_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATERENDERER_FUNCTION);
 		SDL_SetRenderDrawColor = (sdl_setrenderdrawcolor_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETRENDERDRAWCOLOR_FUNCTION);
 		SDL_CreateTextureFromSurface = (sdl_createtexturefromsurface_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATETEXTUREFROMSURFACE_FUNCTION);
 		SDL_FreeSurface = (sdl_freesurface_t)GetProcAddress(SDL_LOADED_DLL, SDL_FREESURFACE_FUNCTION);
@@ -54,9 +53,14 @@ CSDL::CSDL() {
 		SDL_RenderFillRect = (sdl_renderfillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERFILLRECT_FUNCTION);
 
 		// DeltaTime (SDL_GetPerformanceCounter & SDL_GetPerformanceFrequency & SDL_Delay)
-		SDL_GetPerformanceCounter = (sdl_getperformancecounter)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCECOUNTER);
-		SDL_GetPerformanceFrequency = (sdl_getperformancefrequency)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCEFREQUENCY);
-		SDL_Delay = (sdl_delay)GetProcAddress(SDL_LOADED_DLL, SDL_DELAY);
+		SDL_GetPerformanceCounter = (sdl_getperformancecounter_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCECOUNTER_FUNCTION);
+		SDL_GetPerformanceFrequency = (sdl_getperformancefrequency_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETPERFORMANCEFREQUENCY_FUNCTION);
+		SDL_Delay = (sdl_delay_t)GetProcAddress(SDL_LOADED_DLL, SDL_DELAY_FUNCTION);
+
+		// Renderer Inits
+		SDL_CreateRenderer = (sdl_createrenderer_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATERENDERER_FUNCTION);
+		SDL_GetNumRenderDrivers = (sdl_getnumrenderdrivers_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETNUMRENDERDRIVERS_FUNCTION);
+		SDL_GetRenderDriverInfo = (sdl_getnumrenderdriverinfo_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETNUMRENDERDRIVERINFO_FUNCTION);
 
 		// Memory Func
 		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
@@ -111,11 +115,6 @@ void CSDL::Delay(uint32_t ms) {
 SDL_Window* CSDL::CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags)
 {
 	return Instance()->SDL_CreateWindow(title, x, y, w, h, flags);
-}
-
-SDL_Renderer* CSDL::CreateRenderer(SDL_Window* window, int32_t index, uint32_t flags)
-{
-	return Instance()->SDL_CreateRenderer(window, index, flags);
 }
 
 int32_t CSDL::SetRenderDrawColor(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -207,6 +206,21 @@ int32_t CSDL::RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect)
 	return Instance()->SDL_RenderFillRect(renderer, rect);
 }
 
+#pragma region "Renderer Inits"
+SDL_Renderer* CSDL::CreateRenderer(SDL_Window* window, int32_t index, uint32_t flags)
+{
+	return Instance()->SDL_CreateRenderer(window, index, flags);
+}
+
+int32_t CSDL::GetNumRenderDrivers(void) {
+	return Instance()->SDL_GetNumRenderDrivers();
+}
+
+int32_t CSDL::GetRenderDriverInfo(int32_t index, SDL_RendererInfo* info) {
+	return Instance()->SDL_GetRenderDriverInfo(index, info);
+}
+#pragma endregion
+
 #pragma region "Memory Func"
 SDL_RWops* CSDL::RWFromFile(const char* file, const char* mode)
 {
@@ -223,62 +237,3 @@ SDL_RWops* CSDL::RWFromConstMem(const void* mem, int size)
 	return Instance()->SDL_RWFromConstMem(mem, size);
 }
 #pragma endregion
-
-//#pragma region "TIMER"
-//Timer* Timer::sInstance = NULL;
-//
-//Timer* Timer::Instance() {
-//
-//	//Create a new instance of Timer if no instance was created before
-//	if (sInstance == NULL)
-//		sInstance = new Timer();
-//
-//	return sInstance;
-//}
-//
-//void Timer::Release() {
-//
-//	delete sInstance;
-//	sInstance = NULL;
-//}
-//
-//Timer::Timer() {
-//
-//	//Using Reset to initialize all the values beside mTimeScale
-//	Reset();
-//	mTimeScale = 1.0f;
-//}
-//
-//Timer::~Timer() {
-//
-//}
-//
-//void Timer::Reset() {
-//
-//	mStartTicks = CSDL::GetTicks();
-//	mElapsedTicks = 0;
-//	mDelataTime = 0.0f;
-//}
-//
-//float Timer::DeltaTime() {
-//
-//	return mDelataTime;
-//}
-//
-//void Timer::TimeScale(float t) {
-//
-//	mTimeScale = t;
-//}
-//
-//float Timer::TimeScale() {
-//
-//	return mTimeScale;
-//}
-//
-//void Timer::Update() {
-//
-//	mElapsedTicks = CSDL::GetTicks() - mStartTicks;
-//	//Converting milliseconds to seconds
-//	mDelataTime = mElapsedTicks * 0.001f;
-//}
-//#pragma endregion
