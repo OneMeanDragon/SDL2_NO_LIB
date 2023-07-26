@@ -13,13 +13,18 @@
 #include <SDL_image.h>
 
 #define SDL_IMAGE_DLL TEXT("SDL2_IMAGE.DLL")
-#define IMAGE_INIT_FUNCTION "IMG_Init"
-#define IMAGE_IMAGEQUIT_FUNCTION "IMG_Quit"
-#define IMAGE_LOADIMAGE_FUNCTION "IMG_Load"
-
+#define IMAGE_INIT_FUNCTION      "IMG_Init"
 typedef int32_t(*sdl_init_t)(uint32_t flags);
+#define IMAGE_IMAGEQUIT_FUNCTION "IMG_Quit"
 typedef void(*sdl_quit_t)(void);
+#define IMAGE_LOADIMAGE_FUNCTION "IMG_Load"
 typedef SDL_Surface* (*sdl_loadimage_t)(const char* file);
+
+// Mem Funcs
+#define IMAGE_LOADPNG_RW_FUNCTION "IMG_LoadPNG_RW"
+typedef SDL_Surface* (*sdl_loadpng_rw_t)(SDL_RWops* src);
+
+
 
 class CImage {
 private:
@@ -39,6 +44,9 @@ public:
 	static const char* GetError(void);
 
 	static SDL_Surface* Load(const char* file);
+
+	static SDL_Surface* LoadPNG_RW(SDL_RWops* src);
+
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t IMG_Init = nullptr;
@@ -46,6 +54,7 @@ private:
 	/* Image */
 	sdl_loadimage_t IMG_Load = nullptr;
 	sdl_quit_t IMG_Quit = nullptr;
+	sdl_loadpng_rw_t IMG_LoadPNG_RW = nullptr;
 
 private:
 	HINSTANCE IMAGE_LOADED_DLL;
