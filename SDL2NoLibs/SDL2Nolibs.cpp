@@ -25,7 +25,6 @@ CSDL::CSDL() {
 	{
 		SDL_Init = (sdl_init_t)GetProcAddress(SDL_LOADED_DLL, SDL_INIT_FUNCTION);
 		SDL_Quit = (sdl_quit_t)GetProcAddress(SDL_LOADED_DLL, SDL_QUIT_FUNCTION);
-		SDL_CreateWindow = (sdl_createwindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATEWINDOW_FUNCTION);
 		SDL_SetRenderDrawColor = (sdl_setrenderdrawcolor_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETRENDERDRAWCOLOR_FUNCTION);
 		SDL_CreateTextureFromSurface = (sdl_createtexturefromsurface_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATETEXTUREFROMSURFACE_FUNCTION);
 		SDL_FreeSurface = (sdl_freesurface_t)GetProcAddress(SDL_LOADED_DLL, SDL_FREESURFACE_FUNCTION);
@@ -36,7 +35,6 @@ CSDL::CSDL() {
 
 		SDL_DestroyTexture = (sdl_destroytexture_t)GetProcAddress(SDL_LOADED_DLL, SDL_DESTROYTEXTURE_FUNCTION);
 		SDL_DestroyRenderer = (sdl_destroyrenderer_t)GetProcAddress(SDL_LOADED_DLL, SDL_DESTROYRENDERER_FUNCTION);
-		SDL_DestroyWindow = (sdl_destroywindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_DESTROYWINDOW_FUNCTION);
 
 		SDL_GetError = (sdl_geterror_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETERROR_FUNCTION);
 
@@ -66,6 +64,29 @@ CSDL::CSDL() {
 		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
 		SDL_RWFromMem = (sdl_rwfrommem_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMMEM_FUNCTION);
 		SDL_RWFromConstMem = (sdl_rwfromconstmem_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMCONSTMEM_FUNCTION);
+		SDL_FreeRW = (sdl_freerw_t)GetProcAddress(SDL_LOADED_DLL, SDL_FREERW_FUNCTION);
+
+		// Window Flags
+		SDL_CreateWindow = (sdl_createwindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATEWINDOW_FUNCTION);
+		SDL_DestroyWindow = (sdl_destroywindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_DESTROYWINDOW_FUNCTION);
+		SDL_GetWindowFlags = (sdl_getwindowflags_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETWINDOWFLAGS_FUNCTION);
+		SDL_SetWindowFullscreen = (sdl_setwindowfullscreen_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETWINDOWFULLSCREEN_FUNCTION);
+
+		// Surfaces
+		SDL_CreateRGBSurface = (sdl_creatergbsurface_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATERGBSURFACE_FUNCTION);
+		SDL_SetSurfaceColorMod = (sdl_setsurfacecolormod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETSURFACECOLORMOD_FUNCTION);
+		SDL_SetSurfaceAlphaMod = (sdl_setsurfacealphamod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETSURFACEALPHAMOD_FUNCTION);
+
+		//Rects
+		SDL_FillRect = (sdl_fillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_FILLRECT_FUNCTION);
+
+		// Ex
+		SDL_MapRGB = (sdl_maprgb_t)GetProcAddress(SDL_LOADED_DLL, SDL_MAPRGB_FUNCTION);
+
+		// Textures
+		SDL_SetTextureBlendMode = (sdl_settextureblendmode_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETTEXTUREBLENDMODE_FUNCTION);
+		SDL_SetTextureAlphaMod = (sdl_settexturealphamod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETTEXTUREALPHAMOD_FUNCTION);
+
 
 		IsInitialized = true;
 	}
@@ -106,15 +127,6 @@ uint64_t CSDL::GetPerformanceFrequency() {
 
 void CSDL::Delay(uint32_t ms) {
 	return Instance()->SDL_Delay(ms);
-}
-
-//void asdf() {
-//	SDL_SetVideoMode();
-//}
-
-SDL_Window* CSDL::CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags)
-{
-	return Instance()->SDL_CreateWindow(title, x, y, w, h, flags);
 }
 
 int32_t CSDL::SetRenderDrawColor(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -161,11 +173,6 @@ void CSDL::DestroyRenderer(SDL_Renderer* renderer)
 	return Instance()->SDL_DestroyRenderer(renderer);
 }
 
-void CSDL::DestroyWindow(SDL_Window* window)
-{
-	return Instance()->SDL_DestroyWindow(window);
-}
-
 int32_t CSDL::RenderCopyEx(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* srcrect, const SDL_Rect* dstrect, const double angle, const SDL_Point* center, const SDL_RendererFlip flip)
 {
 	return Instance()->SDL_RenderCopyEx(renderer, texture, srcrect, dstrect, angle, center, flip);
@@ -206,6 +213,26 @@ int32_t CSDL::RenderFillRect(SDL_Renderer* renderer, const SDL_Rect* rect)
 	return Instance()->SDL_RenderFillRect(renderer, rect);
 }
 
+#pragma region "Window"
+SDL_Window* CSDL::CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags)
+{
+	return Instance()->SDL_CreateWindow(title, x, y, w, h, flags);
+}
+
+void CSDL::DestroyWindow(SDL_Window* window)
+{
+	return Instance()->SDL_DestroyWindow(window);
+}
+
+uint32_t CSDL::GetWindowFlags(SDL_Window* window) {
+	return Instance()->SDL_GetWindowFlags(window);
+}
+
+int32_t CSDL::SetWindowFullscreen(SDL_Window* window, uint32_t flags) {
+	return Instance()->SDL_SetWindowFullscreen(window, flags);
+}
+#pragma endregion
+
 #pragma region "Renderer Inits"
 SDL_Renderer* CSDL::CreateRenderer(SDL_Window* window, int32_t index, uint32_t flags)
 {
@@ -235,5 +262,49 @@ SDL_RWops* CSDL::RWFromMem(void* mem, int size)
 SDL_RWops* CSDL::RWFromConstMem(const void* mem, int size)
 {
 	return Instance()->SDL_RWFromConstMem(mem, size);
+}
+
+void CSDL::FreeRW(SDL_RWops* area)
+{
+	return Instance()->SDL_FreeRW(area);
+}
+
+#pragma endregion
+
+#pragma region "Surfaces"
+
+SDL_Surface* CSDL::CreateRGBSurface(uint32_t flags, int32_t width, int32_t height, int32_t depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask) {
+	return Instance()->SDL_CreateRGBSurface(flags, width, height, depth, Rmask, Gmask, Bmask, Amask);
+}
+
+int32_t CSDL::SetSurfaceColorMod(SDL_Surface* surface, uint8_t r, uint8_t g, uint8_t b) {
+	return Instance()->SDL_SetSurfaceColorMod(surface, r, g, b);
+}
+
+int32_t CSDL::SetSurfaceAlphaMod(SDL_Surface* surface, uint8_t alpha) {
+	return Instance()->SDL_SetSurfaceAlphaMod(surface, alpha);
+}
+
+#pragma endregion
+
+#pragma region "Rects"
+
+int32_t CSDL::FillRect(SDL_Surface* dst, const SDL_Rect* rect, uint32_t color) {
+	return Instance()->SDL_FillRect(dst, rect, color);
+}
+
+// Ex
+uint32_t CSDL::MapRGB(const SDL_PixelFormat* format, uint8_t r, uint8_t g, uint8_t b) {
+	return Instance()->SDL_MapRGB(format, r, g, b);
+}
+#pragma endregion
+
+#pragma region "Textures"
+int32_t CSDL::SetTextureBlendMode(SDL_Texture* texture, SDL_BlendMode blendMode) {
+	return Instance()->SDL_SetTextureBlendMode(texture, blendMode);
+}
+
+int32_t CSDL::SetTextureAlphaMod(SDL_Texture* texture, uint8_t alpha) {
+	return Instance()->SDL_SetTextureAlphaMod(texture, alpha);
 }
 #pragma endregion
