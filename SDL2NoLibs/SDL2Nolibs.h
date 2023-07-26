@@ -15,7 +15,6 @@
 
 #define SDL_MAIN_DLL TEXT("SDL2.DLL")
 #define SDL_INIT_FUNCTION "SDL_Init"
-#define SDL_CREATEWINDOW_FUNCTION "SDL_CreateWindow"
 #define SDL_SETRENDERDRAWCOLOR_FUNCTION "SDL_SetRenderDrawColor"
 #define SDL_CREATETEXTUREFROMSURFACE_FUNCTION "SDL_CreateTextureFromSurface"
 #define SDL_FREESURFACE_FUNCTION "SDL_FreeSurface"
@@ -26,7 +25,6 @@
 /* destroys */
 #define SDL_DESTROYTEXTURE_FUNCTION "SDL_DestroyTexture"
 #define SDL_DESTROYRENDERER_FUNCTION "SDL_DestroyRenderer"
-#define SDL_DESTROYWINDOW_FUNCTION "SDL_DestroyWindow"
 /* quit */
 #define SDL_QUIT_FUNCTION "SDL_Quit"
 /* error */
@@ -52,13 +50,44 @@
 #define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
 #define SDL_RWFROMMEM_FUNCTION "SDL_RWFromMem"
 #define SDL_RWFROMCONSTMEM_FUNCTION "SDL_RWFromConstMem"
+#define SDL_FREERW_FUNCTION "SDL_FreeRW"
+typedef void(*sdl_freerw_t)(SDL_RWops* area);
+
+
+/* Window Flags */
+#define SDL_CREATEWINDOW_FUNCTION "SDL_CreateWindow"
+#define SDL_DESTROYWINDOW_FUNCTION "SDL_DestroyWindow"
+#define SDL_GETWINDOWFLAGS_FUNCTION "SDL_GetWindowFlags"
+#define SDL_SETWINDOWFULLSCREEN_FUNCTION "SDL_SetWindowFullscreen"
+
+/* Surfaces */
+#define SDL_CREATERGBSURFACE_FUNCTION "SDL_CreateRGBSurface"
+typedef SDL_Surface*(*sdl_creatergbsurface_t)(uint32_t flags, int32_t width, int32_t height, int32_t depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask);
+#define SDL_SETSURFACECOLORMOD_FUNCTION "SDL_SetSurfaceColorMod"
+typedef int32_t(*sdl_setsurfacecolormod_t)(SDL_Surface* surface, uint8_t r, uint8_t g, uint8_t b);
+#define SDL_SETSURFACEALPHAMOD_FUNCTION "SDL_SetSurfaceAlphaMod"
+typedef int32_t(*sdl_setsurfacealphamod_t)(SDL_Surface* surface, uint8_t alpha);
+
+/* rects */
+#define SDL_FILLRECT_FUNCTION "SDL_FillRect"
+typedef int32_t(*sdl_fillrect_t)(SDL_Surface* dst, const SDL_Rect* rect, uint32_t color);
+
+// Ex
+#define SDL_MAPRGB_FUNCTION "SDL_MapRGB"
+typedef uint32_t(*sdl_maprgb_t)(const SDL_PixelFormat* format, uint8_t r, uint8_t g, uint8_t b);
+
+// Textures
+#define SDL_SETTEXTUREBLENDMODE_FUNCTION "SDL_SetTextureBlendMode"
+typedef int32_t(*sdl_settextureblendmode_t)(SDL_Texture* texture, SDL_BlendMode blendMode);
+#define SDL_SETTEXTUREALPHAMOD_FUNCTION "SDL_SetTextureAlphaMod"
+typedef int32_t(*sdl_settexturealphamod_t)(SDL_Texture* texture, uint8_t alpha);
+
 
 
 typedef int32_t(*sdl_init_t)(uint32_t flags);
 typedef void(*sdl_quit_t)(void);
 typedef const char* (*sdl_geterror_t)(void);
 
-typedef SDL_Window* (*sdl_createwindow_t)(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags);
 typedef int32_t(*sdl_setrenderdrawcolor_t)(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 typedef int32_t(*sdl_pollevent_t)(SDL_Event* sevent);
 typedef int32_t(*sdl_renderclear_t)(SDL_Renderer* renderer);
@@ -66,7 +95,6 @@ typedef int32_t(*sdl_rendercopy_t)(SDL_Renderer* renderer, SDL_Texture* texture,
 typedef void (*sdl_renderpresent_t)(SDL_Renderer* renderer);
 typedef void (*sdl_destroytexture_t)(SDL_Texture* texture);
 typedef void (*sdl_destroyrenderer_t)(SDL_Renderer* renderer);
-typedef void (*sdl_destroywindow_t)(SDL_Window* window);
 typedef SDL_Texture* (*sdl_createtexturefromsurface_t)(SDL_Renderer* renderer, SDL_Surface* surface);
 typedef void (*sdl_freesurface_t)(SDL_Surface* surface);
 typedef int32_t(*sdl_rendercopyex_t)(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* srcrect, const SDL_Rect* dstrect, const double angle, const SDL_Point* center, const SDL_RendererFlip flip);
@@ -79,6 +107,12 @@ typedef int32_t(*sdl_renderfillrect_t)(SDL_Renderer* renderer, const SDL_Rect* r
 typedef uint64_t(*sdl_getperformancecounter_t)();
 typedef uint64_t(*sdl_getperformancefrequency_t)();
 typedef void(*sdl_delay_t)(uint32_t);
+// Window
+typedef SDL_Window* (*sdl_createwindow_t)(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags);
+typedef void (*sdl_destroywindow_t)(SDL_Window* window);
+typedef uint32_t(*sdl_getwindowflags_t)(SDL_Window* window);
+typedef int32_t(*sdl_setwindowfullscreen_t)(SDL_Window* window, uint32_t flags);
+
 // Renderer Inits
 typedef SDL_Renderer* (*sdl_createrenderer_t)(SDL_Window* window, int32_t index, uint32_t flags);
 typedef int32_t(*sdl_getnumrenderdrivers_t)(void);
@@ -88,7 +122,6 @@ typedef int32_t(*sdl_getnumrenderdriverinfo_t)(int32_t index, SDL_RendererInfo* 
 typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
 typedef SDL_RWops* (*sdl_rwfrommem_t)(void* mem, int size);
 typedef SDL_RWops* (*sdl_rwfromconstmem_t)(const void* mem, int size);
-
 
 class CSDL {
 private:
@@ -107,7 +140,6 @@ public:
 	static void Quit(void);
 	static const char* GetError(void);
 
-	static SDL_Window* CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags);
 	static int32_t SetRenderDrawColor(SDL_Renderer* renderer, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 	static SDL_Texture* CreateTextureFromSurface(SDL_Renderer* renderer, SDL_Surface* surface);
 	static void FreeSurface(SDL_Surface* surface);
@@ -117,7 +149,6 @@ public:
 	static void RenderPresent(SDL_Renderer* renderer);
 	static void DestroyTexture(SDL_Texture* texture);
 	static void DestroyRenderer(SDL_Renderer* renderer);
-	static void DestroyWindow(SDL_Window* window);
 
 	static int32_t RenderCopyEx(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect* srcrect, const SDL_Rect* dstrect, const double angle, const SDL_Point* center, const SDL_RendererFlip flip);
 	static int32_t RenderDrawLine(SDL_Renderer* renderer, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
@@ -140,19 +171,39 @@ public:
 	static int32_t GetNumRenderDrivers(void);
 	static int32_t GetRenderDriverInfo(int32_t index, SDL_RendererInfo* info);
 
-
-
 	// Memory func
 	static SDL_RWops* RWFromFile(const char* file, const char* mode);
 	static SDL_RWops* RWFromMem(void* mem, int size);
 	static SDL_RWops* RWFromConstMem(const void* mem, int size);
+	static void FreeRW(SDL_RWops* area);
+
+	// Window
+	static SDL_Window* CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags);
+	static void DestroyWindow(SDL_Window* window);
+	static uint32_t GetWindowFlags(SDL_Window* window);
+	static int32_t SetWindowFullscreen(SDL_Window* window, uint32_t flags);
+
+	// Surfaces
+	static SDL_Surface* CreateRGBSurface(uint32_t flags, int32_t width, int32_t height, int32_t depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask);
+	static int32_t SetSurfaceColorMod(SDL_Surface* surface, uint8_t r, uint8_t g, uint8_t b);
+	static int32_t SetSurfaceAlphaMod(SDL_Surface* surface, uint8_t alpha);
+
+	// Rect
+	static int32_t FillRect(SDL_Surface* dst, const SDL_Rect* rect, uint32_t color);
+
+	// Ex
+	static uint32_t MapRGB(const SDL_PixelFormat* format, uint8_t r, uint8_t g, uint8_t b);
+
+	// Textures
+	static int32_t SetTextureBlendMode(SDL_Texture* texture, SDL_BlendMode blendMode);
+	static int32_t SetTextureAlphaMod(SDL_Texture* texture, uint8_t alpha);
+
 
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t SDL_Init = nullptr;
 
 	/* sdl2 */
-	sdl_createwindow_t SDL_CreateWindow = nullptr;
 	sdl_setrenderdrawcolor_t SDL_SetRenderDrawColor = nullptr;
 	sdl_createtexturefromsurface_t SDL_CreateTextureFromSurface = nullptr;
 	sdl_freesurface_t SDL_FreeSurface = nullptr;
@@ -162,7 +213,6 @@ private:
 	sdl_renderpresent_t SDL_RenderPresent = nullptr;
 	sdl_destroytexture_t SDL_DestroyTexture = nullptr;
 	sdl_destroyrenderer_t SDL_DestroyRenderer = nullptr;
-	sdl_destroywindow_t SDL_DestroyWindow = nullptr;
 	sdl_quit_t SDL_Quit = nullptr;
 	sdl_geterror_t SDL_GetError = nullptr;
 	sdl_rendercopyex_t SDL_RenderCopyEx = nullptr;
@@ -184,7 +234,24 @@ private:
 	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
 	sdl_rwfrommem_t SDL_RWFromMem = nullptr;
 	sdl_rwfromconstmem_t SDL_RWFromConstMem = nullptr;
+	sdl_freerw_t SDL_FreeRW = nullptr;
 
+	//window
+	sdl_createwindow_t SDL_CreateWindow = nullptr;
+	sdl_destroywindow_t SDL_DestroyWindow = nullptr;
+	sdl_getwindowflags_t SDL_GetWindowFlags = nullptr;
+	sdl_setwindowfullscreen_t SDL_SetWindowFullscreen = nullptr;
+	// Surfaces
+	sdl_creatergbsurface_t SDL_CreateRGBSurface = nullptr;
+	sdl_setsurfacecolormod_t SDL_SetSurfaceColorMod = nullptr;
+	sdl_setsurfacealphamod_t SDL_SetSurfaceAlphaMod = nullptr;
+	// Rect
+	sdl_fillrect_t SDL_FillRect = nullptr;
+	// Ex
+	sdl_maprgb_t SDL_MapRGB = nullptr;
+	// Textures
+	sdl_settextureblendmode_t SDL_SetTextureBlendMode = nullptr;
+	sdl_settexturealphamod_t SDL_SetTextureAlphaMod = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
