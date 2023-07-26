@@ -24,10 +24,12 @@ CTTF::CTTF() {
 	{
 		TTF_Init = (sdl_ttfinit_t)GetProcAddress(TTF_LOADED_DLL, TTF_INIT_FUNCTION);
 		TTF_Quit = (sdl_quit_t)GetProcAddress(TTF_LOADED_DLL, TTF_TTFQUIT_FUNCTION);
-		TTF_RenderText_Solid = (sdl_rendertext_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERTEXT_SOLID_FUNCTION);
 		TTF_CloseFont = (ttf_closefont_t)GetProcAddress(TTF_LOADED_DLL, TTF_CLOSEFONT_FUNCTION);
 		TTF_OpenFont = (ttf_openfont_t)GetProcAddress(TTF_LOADED_DLL, TTF_OPENFONT_FUNCTION);
 		TTF_OpenFontRW = (ttf_openfontrw_t)GetProcAddress(TTF_LOADED_DLL, TTF_OPENFONTRW_FUNCTION);
+
+		TTF_RenderText_Solid = (sdl_rendertext_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERTEXT_SOLID_FUNCTION);
+		TTF_RenderUNICODE_Solid = (sdl_renderunicode_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERUNICODE_SOLID_FUNCTION);
 
 		IsInitialized = true;
 	}
@@ -55,11 +57,6 @@ const char* CTTF::GetError(void)
 	return CSDL::Instance()->GetError();
 }
 
-SDL_Surface* CTTF::RenderText_Solid(TTF_Font* font, const char* text, SDL_Color fg)
-{
-	return Instance()->TTF_RenderText_Solid(font, text, fg);
-}
-
 void CTTF::CloseFont(TTF_Font* font)
 {
 	return Instance()->TTF_CloseFont(font);
@@ -73,4 +70,13 @@ TTF_Font* CTTF::OpenFont(const char* file, int32_t ptsize)
 TTF_Font* CTTF::OpenFontRW(SDL_RWops* src, int freesrc, int ptsize)
 {
 	return Instance()->TTF_OpenFontRW(src, freesrc, ptsize);
+}
+
+SDL_Surface* CTTF::RenderText_Solid(TTF_Font* font, const char* text, SDL_Color fg)
+{
+	return Instance()->TTF_RenderText_Solid(font, text, fg);
+}
+
+SDL_Surface* CTTF::RenderUNICODE_Solid(TTF_Font* font, const wchar_t* text, SDL_Color fg) {
+	return Instance()->TTF_RenderUNICODE_Solid(font, text, fg);
 }
