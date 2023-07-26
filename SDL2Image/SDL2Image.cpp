@@ -25,6 +25,8 @@ CImage::CImage() {
 		IMG_Init = (sdl_init_t)GetProcAddress(IMAGE_LOADED_DLL, IMAGE_INIT_FUNCTION);
 		IMG_Quit = (sdl_quit_t)GetProcAddress(IMAGE_LOADED_DLL, IMAGE_IMAGEQUIT_FUNCTION);
 		IMG_Load = (sdl_loadimage_t)GetProcAddress(IMAGE_LOADED_DLL, IMAGE_LOADIMAGE_FUNCTION);
+		IMG_LoadPNG_RW = (sdl_loadpng_rw_t)GetProcAddress(IMAGE_LOADED_DLL, IMAGE_LOADPNG_RW_FUNCTION);
+
 		IsInitialized = true;
 	}
 }
@@ -55,3 +57,12 @@ const char* CImage::GetError(void)
 {
 	return CSDL::Instance()->GetError();
 }
+
+#pragma region "Mem Funcs"
+
+SDL_Surface* CImage::LoadPNG_RW(SDL_RWops* src)
+{
+	return Instance()->IMG_LoadPNG_RW(src);
+}
+
+#pragma endregion
