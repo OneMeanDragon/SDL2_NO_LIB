@@ -87,6 +87,8 @@ CSDL::CSDL() {
 		SDL_SetTextureBlendMode = (sdl_settextureblendmode_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETTEXTUREBLENDMODE_FUNCTION);
 		SDL_SetTextureAlphaMod = (sdl_settexturealphamod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETTEXTUREALPHAMOD_FUNCTION);
 
+		// Event
+		SDL_PushEvent = (sdl_pushevent_t)GetProcAddress(SDL_LOADED_DLL, SDL_PUSHEVENT_FUNCTION);
 
 		IsInitialized = true;
 	}
@@ -306,5 +308,11 @@ int32_t CSDL::SetTextureBlendMode(SDL_Texture* texture, SDL_BlendMode blendMode)
 
 int32_t CSDL::SetTextureAlphaMod(SDL_Texture* texture, uint8_t alpha) {
 	return Instance()->SDL_SetTextureAlphaMod(texture, alpha);
+}
+#pragma endregion
+
+#pragma region "Events"
+int32_t CSDL::PushEvent(SDL_Event* evnt) {
+	return Instance()->SDL_PushEvent(evnt);
 }
 #pragma endregion
