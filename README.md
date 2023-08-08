@@ -8,7 +8,7 @@ Currently what I actually use from the SDL2 dlls, so if your looking for a speci
 You must still follow the SDL rules, Each of the classes need to be initalized in the same thread.
 Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly the sdl mixer dll).
 
-### The _"SDL2" folder in here can be ignored unless you just want the basic window lol_
+### _"SDL2, Image, TTF, and Mixer"_ - Just include what you need.
   - SDL2(NoLibs)
   - SDL2_Image
   - SDL2_TTF
@@ -22,8 +22,6 @@ Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly t
 #include "SDL2Image.h"
 
 int main() {
-	//const int FRAME_RATE = 120;
-	//Timer* mTimer = Timer::Instance();
 
 	CSDL::Init(SDL_INIT_VIDEO);
 	if (!(CImage::Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
@@ -69,7 +67,6 @@ int main() {
 	SDL_Event event;
 	bool running = true;
 	while (running) {
-		//mTimer->Update();
 
 		while (CSDL::PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
@@ -77,7 +74,6 @@ int main() {
 			}
 		}
 
-		//if (mTimer->DeltaTime() >= (1.0f / FRAME_RATE)) {
 			CSDL::RenderClear(renderer); /* start */
 
 			for (int i = 0; i < 19; i++) /* just draw everything for now. */
@@ -86,8 +82,6 @@ int main() {
 			}
 
 			CSDL::RenderPresent(renderer); /* end */
-		//	mTimer->Reset();
-		//}
 	}
 	for (int i = 0; i < 19; i++)
 	{
@@ -98,6 +92,5 @@ int main() {
 
 	CImage::Quit(); /* Quit will also release the singleton */
 	CSDL::Quit();
-	//Timer::Release();
 }
 ```
