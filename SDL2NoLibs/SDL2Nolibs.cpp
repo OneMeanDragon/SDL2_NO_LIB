@@ -90,6 +90,13 @@ CSDL::CSDL() {
 		// Event
 		SDL_PushEvent = (sdl_pushevent_t)GetProcAddress(SDL_LOADED_DLL, SDL_PUSHEVENT_FUNCTION);
 
+		// Cursor
+		SDL_GetCursor = (sdl_getcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETCURSOR_FUNCTION);
+		SDL_SetCursor = (sdl_setcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETCURSOR_FUNCTION);
+		SDL_FreeCursor = (sdl_freecursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_FREECURSOR_FUNCTION);
+		SDL_CreateSystemCursor = (sdl_createsystemcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATESYSTEMCURSOR_FUNCTION);
+
+
 		IsInitialized = true;
 	}
 }
@@ -314,5 +321,20 @@ int32_t CSDL::SetTextureAlphaMod(SDL_Texture* texture, uint8_t alpha) {
 #pragma region "Events"
 int32_t CSDL::PushEvent(SDL_Event* evnt) {
 	return Instance()->SDL_PushEvent(evnt);
+}
+#pragma endregion
+
+#pragma region "Cursor"
+SDL_Cursor* CSDL::GetCursor(){
+	return Instance()->SDL_GetCursor();
+}
+void CSDL::SetCursor(SDL_Cursor* cursor){
+	return Instance()->SDL_SetCursor(cursor);
+}
+void CSDL::FreeCursor(SDL_Cursor* cursor){
+	return Instance()->SDL_FreeCursor(cursor);
+}
+SDL_Cursor* CSDL::CreateSystemCursor(SDL_SystemCursor id){
+	return Instance()->SDL_CreateSystemCursor(id);
 }
 #pragma endregion
