@@ -86,6 +86,18 @@ typedef int32_t(*sdl_settexturealphamod_t)(SDL_Texture* texture, uint8_t alpha);
 #define SDL_PUSHEVENT_FUNCTION "SDL_PushEvent"
 typedef int32_t(*sdl_pushevent_t)(SDL_Event* evnt);
 
+// Cursor
+#define SDL_GETCURSOR_FUNCTION "SDL_GetCursor"
+typedef SDL_Cursor*(*sdl_getcursor_t)(void);
+#define SDL_SETCURSOR_FUNCTION "SDL_SetCursor"
+typedef void(*sdl_setcursor_t)(SDL_Cursor* cursor);
+#define SDL_FREECURSOR_FUNCTION "SDL_FreeCursor"
+typedef void(*sdl_freecursor_t)(SDL_Cursor* cursor);
+#define SDL_CREATESYSTEMCURSOR_FUNCTION "SDL_CreateSystemCursor"
+typedef SDL_Cursor*(*sdl_createsystemcursor_t)(SDL_SystemCursor id);
+
+
+
 
 typedef int32_t(*sdl_init_t)(uint32_t flags);
 typedef void(*sdl_quit_t)(void);
@@ -204,6 +216,13 @@ public:
 	// Events
 	static int32_t PushEvent(SDL_Event* evnt);
 
+	// Cursor
+	static SDL_Cursor* GetCursor();
+	static void SetCursor(SDL_Cursor* cursor);
+	static void FreeCursor(SDL_Cursor* cursor);
+	static SDL_Cursor* CreateSystemCursor(SDL_SystemCursor id);
+
+
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t SDL_Init = nullptr;
@@ -259,6 +278,12 @@ private:
 	sdl_settexturealphamod_t SDL_SetTextureAlphaMod = nullptr;
 	// Events
 	sdl_pushevent_t SDL_PushEvent = nullptr;
+	// Cursor
+	sdl_getcursor_t SDL_GetCursor = nullptr;
+	sdl_setcursor_t SDL_SetCursor = nullptr;
+	sdl_freecursor_t SDL_FreeCursor = nullptr;
+	sdl_createsystemcursor_t SDL_CreateSystemCursor = nullptr;
+
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
