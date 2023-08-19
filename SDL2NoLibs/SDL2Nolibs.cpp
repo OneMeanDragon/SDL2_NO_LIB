@@ -95,6 +95,7 @@ CSDL::CSDL() {
 		SDL_SetCursor = (sdl_setcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETCURSOR_FUNCTION);
 		SDL_FreeCursor = (sdl_freecursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_FREECURSOR_FUNCTION);
 		SDL_CreateSystemCursor = (sdl_createsystemcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATESYSTEMCURSOR_FUNCTION);
+		SDL_ShowCursor = (sdl_showcursor_t)GetProcAddress(SDL_LOADED_DLL, SDL_SHOWCURSOR_FUNCTION);
 
 
 		IsInitialized = true;
@@ -336,5 +337,8 @@ void CSDL::FreeCursor(SDL_Cursor* cursor){
 }
 SDL_Cursor* CSDL::CreateSystemCursor(SDL_SystemCursor id){
 	return Instance()->SDL_CreateSystemCursor(id);
+}
+int32_t CSDL::ShowCursor(int32_t toggle) {
+	return Instance()->SDL_ShowCursor(toggle);
 }
 #pragma endregion
