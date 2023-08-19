@@ -95,7 +95,8 @@ typedef void(*sdl_setcursor_t)(SDL_Cursor* cursor);
 typedef void(*sdl_freecursor_t)(SDL_Cursor* cursor);
 #define SDL_CREATESYSTEMCURSOR_FUNCTION "SDL_CreateSystemCursor"
 typedef SDL_Cursor*(*sdl_createsystemcursor_t)(SDL_SystemCursor id);
-
+#define SDL_SHOWCURSOR_FUNCTION "SDL_ShowCursor"
+typedef int32_t(*sdl_showcursor_t)(int32_t toggle);
 
 
 
@@ -221,7 +222,7 @@ public:
 	static void SetCursor(SDL_Cursor* cursor);
 	static void FreeCursor(SDL_Cursor* cursor);
 	static SDL_Cursor* CreateSystemCursor(SDL_SystemCursor id);
-
+	static int32_t ShowCursor(int32_t toggle);
 
 private:
 	/* SDL2 Initialization calls */
@@ -283,7 +284,7 @@ private:
 	sdl_setcursor_t SDL_SetCursor = nullptr;
 	sdl_freecursor_t SDL_FreeCursor = nullptr;
 	sdl_createsystemcursor_t SDL_CreateSystemCursor = nullptr;
-
+	sdl_showcursor_t SDL_ShowCursor = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;
