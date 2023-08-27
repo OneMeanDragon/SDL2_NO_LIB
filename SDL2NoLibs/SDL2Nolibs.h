@@ -61,12 +61,16 @@ typedef void(*sdl_freerw_t)(SDL_RWops* area);
 #define SDL_SETWINDOWFULLSCREEN_FUNCTION "SDL_SetWindowFullscreen"
 
 /* Surfaces */
+#define SDL_CREATERGBSURFACEWITHFORMAT_FUNCTION "SDL_CreateRGBSurfaceWithFormat"
+typedef SDL_Surface* (*sdl_creatergbsurfacewithformat_t)(Uint32 flags, int width, int height, int depth, Uint32 format);
 #define SDL_CREATERGBSURFACE_FUNCTION "SDL_CreateRGBSurface"
 typedef SDL_Surface*(*sdl_creatergbsurface_t)(uint32_t flags, int32_t width, int32_t height, int32_t depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask);
 #define SDL_SETSURFACECOLORMOD_FUNCTION "SDL_SetSurfaceColorMod"
 typedef int32_t(*sdl_setsurfacecolormod_t)(SDL_Surface* surface, uint8_t r, uint8_t g, uint8_t b);
 #define SDL_SETSURFACEALPHAMOD_FUNCTION "SDL_SetSurfaceAlphaMod"
 typedef int32_t(*sdl_setsurfacealphamod_t)(SDL_Surface* surface, uint8_t alpha);
+#define SDL_UPPERBLIT_FUNCTION "SDL_UpperBlit"
+typedef int32_t(*sdl_upperblit_t)(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 
 /* rects */
 #define SDL_FILLRECT_FUNCTION "SDL_FillRect"
@@ -81,6 +85,13 @@ typedef uint32_t(*sdl_maprgb_t)(const SDL_PixelFormat* format, uint8_t r, uint8_
 typedef int32_t(*sdl_settextureblendmode_t)(SDL_Texture* texture, SDL_BlendMode blendMode);
 #define SDL_SETTEXTUREALPHAMOD_FUNCTION "SDL_SetTextureAlphaMod"
 typedef int32_t(*sdl_settexturealphamod_t)(SDL_Texture* texture, uint8_t alpha);
+#define SDL_CREATETEXTURE_FUNCTION "SDL_CreateTexture"
+typedef SDL_Texture* (*sdl_createtexture_t)(SDL_Renderer* renderer, Uint32 format, int access, int w, int h);
+#define SDL_LOCKTEXTURE_FUNCTION "SDL_LockTexture"
+typedef int32_t(*sdl_locktexture_t)(SDL_Texture* texture, const SDL_Rect* rect, void** pixels, int* pitch);
+#define SDL_UNLOCKTEXTURE_FUNCTION "SDL_UnlockTexture"
+typedef void(*sdl_unlocktexture_t)(SDL_Texture* texture);
+
 
 // Events
 #define SDL_PUSHEVENT_FUNCTION "SDL_PushEvent"
@@ -133,6 +144,8 @@ typedef int32_t(*sdl_setwindowfullscreen_t)(SDL_Window* window, uint32_t flags);
 typedef SDL_Renderer* (*sdl_createrenderer_t)(SDL_Window* window, int32_t index, uint32_t flags);
 typedef int32_t(*sdl_getnumrenderdrivers_t)(void);
 typedef int32_t(*sdl_getnumrenderdriverinfo_t)(int32_t index, SDL_RendererInfo* info);
+#define SDL_SETRENDERTARGET_FUNCTION "SDL_SetRenderTarget"
+typedef int32_t(*sdl_setrendertarget_t)(SDL_Renderer* renderer, SDL_Texture* texture);
 
 // Memory functions
 typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
@@ -186,6 +199,7 @@ public:
 	static SDL_Renderer* CreateRenderer(SDL_Window* window, int32_t index, uint32_t flags);
 	static int32_t GetNumRenderDrivers(void);
 	static int32_t GetRenderDriverInfo(int32_t index, SDL_RendererInfo* info);
+	static int32_t SetRenderTarget(SDL_Renderer* renderer, SDL_Texture* texture);
 
 	// Memory func
 	static SDL_RWops* RWFromFile(const char* file, const char* mode);
@@ -200,9 +214,13 @@ public:
 	static int32_t SetWindowFullscreen(SDL_Window* window, uint32_t flags);
 
 	// Surfaces
+	static SDL_Surface* CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth, Uint32 format);
 	static SDL_Surface* CreateRGBSurface(uint32_t flags, int32_t width, int32_t height, int32_t depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask, uint32_t Amask);
 	static int32_t SetSurfaceColorMod(SDL_Surface* surface, uint8_t r, uint8_t g, uint8_t b);
 	static int32_t SetSurfaceAlphaMod(SDL_Surface* surface, uint8_t alpha);
+	static int32_t UpperBlit(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
+	static int32_t BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
+
 
 	// Rect
 	static int32_t FillRect(SDL_Surface* dst, const SDL_Rect* rect, uint32_t color);
@@ -213,6 +231,9 @@ public:
 	// Textures
 	static int32_t SetTextureBlendMode(SDL_Texture* texture, SDL_BlendMode blendMode);
 	static int32_t SetTextureAlphaMod(SDL_Texture* texture, uint8_t alpha);
+	static SDL_Texture* CreateTexture(SDL_Renderer* renderer, Uint32 format, int access, int w, int h);
+	static int32_t LockTexture(SDL_Texture* texture, const SDL_Rect* rect, void** pixels, int* pitch);
+	static void UnlockTexture(SDL_Texture* texture);
 
 	// Events
 	static int32_t PushEvent(SDL_Event* evnt);
@@ -255,6 +276,8 @@ private:
 	sdl_createrenderer_t SDL_CreateRenderer = nullptr;
 	sdl_getnumrenderdrivers_t SDL_GetNumRenderDrivers = nullptr;
 	sdl_getnumrenderdriverinfo_t SDL_GetRenderDriverInfo = nullptr;
+	sdl_setrendertarget_t SDL_SetRenderTarget = nullptr;
+
 	//memory func
 	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
 	sdl_rwfrommem_t SDL_RWFromMem = nullptr;
@@ -267,9 +290,12 @@ private:
 	sdl_getwindowflags_t SDL_GetWindowFlags = nullptr;
 	sdl_setwindowfullscreen_t SDL_SetWindowFullscreen = nullptr;
 	// Surfaces
+	sdl_creatergbsurfacewithformat_t SDL_CreateRGBSurfaceWithFormat = nullptr;
 	sdl_creatergbsurface_t SDL_CreateRGBSurface = nullptr;
 	sdl_setsurfacecolormod_t SDL_SetSurfaceColorMod = nullptr;
 	sdl_setsurfacealphamod_t SDL_SetSurfaceAlphaMod = nullptr;
+	sdl_upperblit_t SDL_UpperBlit = nullptr;
+
 	// Rect
 	sdl_fillrect_t SDL_FillRect = nullptr;
 	// Ex
@@ -277,6 +303,10 @@ private:
 	// Textures
 	sdl_settextureblendmode_t SDL_SetTextureBlendMode = nullptr;
 	sdl_settexturealphamod_t SDL_SetTextureAlphaMod = nullptr;
+	sdl_createtexture_t SDL_CreateTexture = nullptr;
+	sdl_locktexture_t SDL_LockTexture = nullptr;
+	sdl_unlocktexture_t SDL_UnlockTexture = nullptr;
+
 	// Events
 	sdl_pushevent_t SDL_PushEvent = nullptr;
 	// Cursor
