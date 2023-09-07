@@ -43,8 +43,8 @@ typedef void(*sdl_resumemusic_t)(void);
 typedef int32_t(*sdl_playchanneltimed_t)(int32_t channel, Mix_Chunk* chunk, int32_t loops, int32_t ticks);
 typedef void(*sdl_freemusic_t)(Mix_Music* music);
 typedef void(*sdl_freechunk_t)(Mix_Chunk* chunk);
-typedef Mix_Music*(*sdl_loadmus_t)(const char* file);
-typedef Mix_Chunk*(*sdl_loadwav_rw_t)(SDL_RWops* src, int32_t freesrc);
+typedef Mix_Music* (*sdl_loadmus_t)(const char* file);
+typedef Mix_Chunk* (*sdl_loadwav_rw_t)(SDL_RWops* src, int32_t freesrc);
 
 class CMIXER {
 private:
@@ -53,6 +53,8 @@ private:
 	CMIXER();
 	~CMIXER();
 
+public:
+	CMIXER(const CMIXER& obj) = delete; /* Remove the copy constructor */
 public:
 	static bool IsInitialized;
 
@@ -80,7 +82,7 @@ public:
 private:
 	sdl_mixerinit_t Mix_Init = nullptr;
 	sdl_quit_t Mix_Quit = nullptr;
-	
+
 	sdl_openaudio_t Mix_OpenAudio = nullptr;
 	sdl_playmusic_t Mix_PlayMusic = nullptr;
 	sdl_playingmusic_t Mix_PlayingMusic = nullptr;
