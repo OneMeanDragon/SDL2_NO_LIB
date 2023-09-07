@@ -34,6 +34,8 @@ private:
 	~CImage();
 
 public:
+	CImage(const CImage& obj) = delete; /* Remove the copy constructor */
+public:
 	static bool IsInitialized;
 
 	static CImage* Instance();
