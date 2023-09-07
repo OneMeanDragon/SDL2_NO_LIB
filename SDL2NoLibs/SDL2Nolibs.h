@@ -46,6 +46,16 @@
 #define SDL_GETNUMRENDERDRIVERS_FUNCTION "SDL_GetNumRenderDrivers"
 #define SDL_GETNUMRENDERDRIVERINFO_FUNCTION "SDL_GetRenderDriverInfo"
 
+//extern DECLSPEC int SDLCALL SDL_RenderSetLogicalSize(SDL_Renderer * renderer, int w, int h);
+//extern DECLSPEC void SDLCALL SDL_RenderGetLogicalSize(SDL_Renderer * renderer, int *w, int *h);
+//extern DECLSPEC int SDLCALL SDL_RenderSetIntegerScale(SDL_Renderer * renderer, SDL_bool enable);
+//extern DECLSPEC SDL_bool SDLCALL SDL_RenderGetIntegerScale(SDL_Renderer * renderer);
+//extern DECLSPEC int SDLCALL SDL_RenderSetViewport(SDL_Renderer * renderer,const SDL_Rect* rect);
+//extern DECLSPEC void SDLCALL SDL_RenderGetViewport(SDL_Renderer * renderer,SDL_Rect* rect);
+//extern DECLSPEC int SDLCALL SDL_RenderSetScale(SDL_Renderer * renderer,float scaleX, float scaleY);
+//extern DECLSPEC void SDLCALL SDL_RenderGetScale(SDL_Renderer * renderer,float* scaleX, float* scaleY);
+
+
 /* Memory Func */
 #define SDL_RWFROMFILE_FUNCTION "SDL_RWFromFile"
 #define SDL_RWFROMMEM_FUNCTION "SDL_RWFromMem"
@@ -159,6 +169,8 @@ private:
 	CSDL();
 	~CSDL();
 
+public:
+	CSDL(const CSDL& obj) = delete; /* Remove the copy constructor */
 public:
 	static bool IsInitialized;
 
