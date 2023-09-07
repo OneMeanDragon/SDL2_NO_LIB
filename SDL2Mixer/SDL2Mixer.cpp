@@ -1,10 +1,18 @@
 #include "SDL2Nolibs.h"
 #include "SDL2Mixer.h"
 
+#pragma region "SDL2_MIXER.DLL"
+
+#if defined(SDL_MUTEX)
+std::mutex Singleton::mutex_;
+#endif
 CMIXER* CMIXER::sInstance = nullptr;
 bool CMIXER::IsInitialized = false;
 
 CMIXER* CMIXER::Instance() {
+#if defined(SDL_MUTEX)
+	std::lock_guard<std::mutex> lock(mutex_);
+#endif
 	if (sInstance == nullptr)
 		sInstance = new CMIXER();
 
@@ -126,3 +134,5 @@ Mix_Chunk* CMIXER::LoadWAV(const char* file)
 {
 	return Instance()->Mix_LoadWAV_RW(CSDL::RWFromFile(file, "rb"), 1);
 }
+
+#pragma endregion // End SDL2_MIXER.DLL
