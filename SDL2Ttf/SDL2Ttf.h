@@ -45,6 +45,8 @@ private:
 	~CTTF();
 
 public:
+	CTTF(const CTTF& obj) = delete; /* Remove the copy constructor */
+public:
 	static bool IsInitialized;
 
 	static CTTF* Instance();
