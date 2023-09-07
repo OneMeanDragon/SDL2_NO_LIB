@@ -165,12 +165,16 @@ typedef SDL_RWops* (*sdl_rwfromconstmem_t)(const void* mem, int size);
 class CSDL {
 private:
 	static CSDL* sInstance;
-
+#if defined(SDL_MUTEX)
+	static std::mutex mutex_;
+#endif
+private:
 	CSDL();
 	~CSDL();
 
 public:
-	CSDL(const CSDL& obj) = delete; /* Remove the copy constructor */
+	CSDL(const CSDL& obj) = delete;       /* Remove the copy constructor */
+	void operator=(const CSDL&) = delete; /* Remove the assignment operator */
 public:
 	static bool IsInitialized;
 
