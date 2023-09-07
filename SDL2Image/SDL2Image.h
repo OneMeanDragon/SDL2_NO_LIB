@@ -29,12 +29,17 @@ typedef SDL_Surface* (*sdl_loadpng_rw_t)(SDL_RWops* src);
 class CImage {
 private:
 	static CImage* sInstance;
+#if defined(SDL_MUTEX)
+	static std::mutex mutex_;
+#endif
+private:
 
 	CImage();
 	~CImage();
 
 public:
-	CImage(const CImage& obj) = delete; /* Remove the copy constructor */
+	CImage(const CImage& obj) = delete;     /* Remove the copy constructor    */
+	void operator=(const CImage&) = delete; /* Remove the assignment operator */
 public:
 	static bool IsInitialized;
 
