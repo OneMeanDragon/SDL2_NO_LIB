@@ -14,7 +14,7 @@ Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly t
   - SDL2_TTF
   - SDL2_Mixer
 
-#### _Example_
+#### _Example_ (Reminder: this example is running at unlocked fps, you may want to init with VSYNC)
 ```cpp
 #include <iostream>
 
