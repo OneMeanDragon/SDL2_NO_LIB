@@ -49,12 +49,17 @@ typedef Mix_Chunk* (*sdl_loadwav_rw_t)(SDL_RWops* src, int32_t freesrc);
 class CMIXER {
 private:
 	static CMIXER* sInstance;
+#if defined(SDL_MUTEX)
+	static std::mutex mutex_;
+#endif
+private:
 
 	CMIXER();
 	~CMIXER();
 
 public:
-	CMIXER(const CMIXER& obj) = delete; /* Remove the copy constructor */
+	CMIXER(const CMIXER& obj) = delete;     /* Remove the copy constructor */
+	void operator=(const CMIXER&) = delete; /* Remove the assignment operator */
 public:
 	static bool IsInitialized;
 
