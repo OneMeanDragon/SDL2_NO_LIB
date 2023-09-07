@@ -1,10 +1,18 @@
 #include "SDL2Nolibs.h"
 #include "SDL2Ttf.h"
 
+#pragma region "SDL2_TTF.DLL"
+
+#if defined(SDL_MUTEX)
+std::mutex Singleton::mutex_; 
+#endif
 CTTF* CTTF::sInstance = nullptr;
 bool CTTF::IsInitialized = false;
 
 CTTF* CTTF::Instance() {
+#if defined(SDL_MUTEX)
+	std::lock_guard<std::mutex> lock(mutex_); 
+#endif
 	if (sInstance == nullptr)
 		sInstance = new CTTF();
 
@@ -80,3 +88,5 @@ SDL_Surface* CTTF::RenderText_Solid(TTF_Font* font, const char* text, SDL_Color 
 SDL_Surface* CTTF::RenderUNICODE_Solid(TTF_Font* font, const wchar_t* text, SDL_Color fg) {
 	return Instance()->TTF_RenderUNICODE_Solid(font, text, fg);
 }
+
+#pragma endregion // End SDL2_TTF.DLL
