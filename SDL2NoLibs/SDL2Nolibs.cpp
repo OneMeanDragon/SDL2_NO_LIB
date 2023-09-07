@@ -1,9 +1,17 @@
 #include "SDL2Nolibs.h"
 
+#pragma region "SDL2.DLL"
+
+#if defined(SDL_MUTEX)
+std::mutex Singleton::mutex_;
+#endif
 CSDL* CSDL::sInstance = nullptr;
 bool CSDL::IsInitialized = false;
 
 CSDL* CSDL::Instance() {
+#if defined(SDL_MUTEX)
+	std::lock_guard<std::mutex> lock(mutex_);
+#endif
 	if (sInstance == nullptr)
 		sInstance = new CSDL();
 
@@ -389,3 +397,5 @@ int32_t CSDL::ShowCursor(int32_t toggle) {
 	return Instance()->SDL_ShowCursor(toggle);
 }
 #pragma endregion
+
+#pragma endregion // End SDL2.DLL
