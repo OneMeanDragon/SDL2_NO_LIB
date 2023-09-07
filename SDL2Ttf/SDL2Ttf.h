@@ -13,39 +13,43 @@
 #include <SDL_ttf.h>
 
 #define SDL_TTF_DLL TEXT("SDL2_TTF.DLL")
+
 #define TTF_INIT_FUNCTION "TTF_Init"
+typedef int32_t(*sdl_ttfinit_t)();
+
 #define TTF_TTFQUIT_FUNCTION "TTF_Quit"
+typedef void(*sdl_quit_t)(void);
+
 #define TTF_RENDERTEXT_SOLID_FUNCTION "TTF_RenderText_Solid"
 typedef SDL_Surface* (*sdl_rendertext_solid_t)(TTF_Font* font, const char* text, SDL_Color fg);
+
 #define TTF_RENDERUNICODE_SOLID_FUNCTION "TTF_RenderUNICODE_Solid"
 typedef SDL_Surface* (*sdl_renderunicode_solid_t)(TTF_Font* font, const wchar_t* text, SDL_Color fg);
 
 #define TTF_CLOSEFONT_FUNCTION "TTF_CloseFont"
-#define TTF_OPENFONT_FUNCTION "TTF_OpenFont"
-#define TTF_OPENFONTRW_FUNCTION "TTF_OpenFontRW"
-// Memory Func
-//TTF_OpenFontRW
-
-//extern DECLSPEC TTF_Font* SDLCALL TTF_OpenFontRW(SDL_RWops* src, int freesrc, int ptsize);
-
-/*
-extern DECLSPEC TTF_Font * SDLCALL TTF_OpenFont(const char *file, int ptsize);
-*/
-typedef int32_t(*sdl_ttfinit_t)();
-typedef void(*sdl_quit_t)(void);
 typedef void(*ttf_closefont_t)(TTF_Font* font);
+
+#define TTF_OPENFONT_FUNCTION "TTF_OpenFont"
 typedef TTF_Font* (*ttf_openfont_t)(const char* file, int32_t ptsize);
+
+// Memory Func
+#define TTF_OPENFONTRW_FUNCTION "TTF_OpenFontRW"
 typedef TTF_Font* (*ttf_openfontrw_t)(SDL_RWops* src, int freesrc, int ptsize);
 
 class CTTF {
 private:
 	static CTTF* sInstance;
+#if defined(SDL_MUTEX)
+	static std::mutex mutex_;
+#endif
+private:
 
 	CTTF();
 	~CTTF();
 
 public:
-	CTTF(const CTTF& obj) = delete; /* Remove the copy constructor */
+	CTTF(const CTTF& obj) = delete;       /* Remove the copy constructor */
+	void operator=(const CTTF&) = delete; /* Remove the assignment operator */
 public:
 	static bool IsInitialized;
 
