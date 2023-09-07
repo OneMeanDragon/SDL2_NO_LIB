@@ -1,10 +1,18 @@
 #include "SDL2Nolibs.h"
 #include "SDL2Image.h"
 
+#pragma region "SDL2_IMAGE.DLL"
+
+#if defined(SDL_MUTEX)
+std::mutex Singleton::mutex_;
+#endif
 CImage* CImage::sInstance = nullptr;
 bool CImage::IsInitialized = false;
 
 CImage* CImage::Instance() {
+#if defined(SDL_MUTEX)
+	std::lock_guard<std::mutex> lock(mutex_);
+#endif
 	if (sInstance == nullptr)
 		sInstance = new CImage();
 
@@ -66,3 +74,5 @@ SDL_Surface* CImage::LoadPNG_RW(SDL_RWops* src)
 }
 
 #pragma endregion
+
+#pragma endregion // End SDL2_IMAGE.DLL
