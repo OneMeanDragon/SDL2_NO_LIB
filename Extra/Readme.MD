@@ -10,6 +10,8 @@ That may or may not have anything to do with SDL.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <cassert>
+
 #include "SDL2/SDL2Inc.h"
 #include "DirectX/DXInc.h"
 
@@ -57,7 +59,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             {
                 // Release all outstanding references to the swap chain's buffers before resizing.
                 dx->CleanupRenderTarget();
-                dx->SwapChain()->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+                HRESULT result = dx->SwapChain()->ResizeBuffers(0, event.window.data1, event.window.data2, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+                assert(SUCCEEDED(result) && "Failed to resize swapchain.");
                 dx->CreateRenderTarget();
             }
         }
