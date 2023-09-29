@@ -1,1 +1,0 @@
-# See SDL2NoLibs
