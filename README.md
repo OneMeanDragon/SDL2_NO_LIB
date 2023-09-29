@@ -16,10 +16,11 @@ Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly t
 
 #### _Example_ (Reminder: this example is running at unlocked fps, you may want to init with VSYNC)
 ```cpp
+#define INCLUDE_SDL2
+#define INCLUDE_SDL_IMAGE
 #include <iostream>
 
-#include "SDL2NoLibs.h"
-#include "SDL2Image.h"
+#include "SDL2/SDL2Inc.h"
 
 int main() {
 
