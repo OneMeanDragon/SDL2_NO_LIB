@@ -8,7 +8,7 @@ That may or may not have anything to do with SDL.
 
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <windows.h>
 
 #include "SDL2/SDL2Inc.h"
 #include "DirectX/DXInc.h"
