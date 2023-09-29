@@ -36,7 +36,7 @@ namespace DirectX {
 	public:
 		static DX12Globals* Instance();
 		static void Release();
-	private:
+	public:
 		static int const             NUM_FRAMES_IN_FLIGHT = 3;
 		FrameContext                 g_frameContext[NUM_FRAMES_IN_FLIGHT] = {};
 		UINT                         g_frameIndex = 0;
@@ -57,6 +57,10 @@ namespace DirectX {
 
 	public:
 		IDXGISwapChain3* SwapChain() { return g_pSwapChain; }
+		ID3D12Resource* MainRenderTargetResource(UINT Idx) { return g_mainRenderTargetResource[Idx]; }
+		ID3D12GraphicsCommandList* CommandList() { return g_pd3dCommandList; }
+		D3D12_CPU_DESCRIPTOR_HANDLE MainRenderTargetDescriptor(UINT Idx) { return g_mainRenderTargetDescriptor[Idx]; }
+		ID3D12CommandQueue* CommandQueue() { return g_pd3dCommandQueue; }
 
 	public:
 		bool CreateDeviceD3D(HWND hWnd);
