@@ -9,10 +9,7 @@ You must still follow the SDL rules, Each of the classes need to be initalized i
 Also be sure your using the latest SDL2 DLL's (older dlls had problems, mainly the sdl mixer dll).
 
 ### _"SDL2, Image, TTF, and Mixer"_ - Just include what you need.
-  - SDL2(NoLibs)
-  - SDL2_Image
-  - SDL2_TTF
-  - SDL2_Mixer
+  - See defines in "SDL2/SDL2Inc.h"
 
 #### _Example_ (Reminder: this example is running at unlocked fps, you may want to init with VSYNC)
 ```cpp
