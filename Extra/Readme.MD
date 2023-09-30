@@ -105,6 +105,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     CSDL::DestroyWindow(window);
     CSDL::Quit();
-	return 0;
+    return 0;
 }
 ```
