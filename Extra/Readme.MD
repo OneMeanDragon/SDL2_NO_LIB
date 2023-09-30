@@ -100,6 +100,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     }
 
     dx->CleanupDeviceD3D();
+    DirectX::DX12Globals::Release();
+    dx = nullptr;
+
     CSDL::DestroyWindow(window);
     CSDL::Quit();
 	return 0;
