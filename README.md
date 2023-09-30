@@ -65,26 +65,26 @@ int main() {
 	SDL_Event event;
 	bool running = true;
 	while (running) {
-
-		while (CSDL::PollEvent(&event)) {
+		while (CSDL::PollEvent(&event)) { /* Events */
 			if (event.type == SDL_QUIT) {
 				running = false;
 			}
 		}
 
-			CSDL::RenderClear(renderer); /* start */
+		CSDL::RenderClear(renderer); /* Start */
 
-			for (int i = 0; i < 19; i++) /* just draw everything for now. */
-			{
-				CSDL::RenderCopy(renderer, imageTexture[i], nullptr, nullptr);
-			}
+		for (int i = 0; i < 19; i++) { /* just draw everything for now. */
+			CSDL::RenderCopy(renderer, imageTexture[i], nullptr, nullptr);
+		}
 
-			CSDL::RenderPresent(renderer); /* end */
+		CSDL::RenderPresent(renderer); /* End */
 	}
+
 	for (int i = 0; i < 19; i++)
 	{
 		CSDL::DestroyTexture(imageTexture[i]); /* destroy the textures */
 	}
+
 	CSDL::DestroyRenderer(renderer);
 	CSDL::DestroyWindow(window);
 
