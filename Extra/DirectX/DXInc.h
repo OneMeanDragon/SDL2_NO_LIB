@@ -1,5 +1,5 @@
-#if !defined(_DX12_GLOBAL_HEADER)
-#define _DX12_GLOBAL_HEADER
+#if !defined(_DX_INCLUDE_HEADER)
+#define _DX_INCLUDE_HEADER
 #pragma once
 
 #if defined(INCLUDE_DIRECTX12)
