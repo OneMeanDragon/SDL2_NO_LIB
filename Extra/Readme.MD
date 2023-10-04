@@ -18,7 +18,7 @@ That may or may not have anything to do with SDL.
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nShowCmd) {
     if (CSDL::Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
     {
-        //printf("Error: %s\n", SDL_GetError());
+        //printf("Error: %s\n", CSDL::GetError());
         return -1;
     }
 
