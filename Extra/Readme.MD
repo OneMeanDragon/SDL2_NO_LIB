@@ -108,3 +108,78 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     return 0;
 }
 ```
+### Direct2D + SDL
+```cpp
+#define INCLUDE_DIRECT2D
+#define INCLUDE_SDL2
+
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <cassert>
+
+#include "Graphics/SDL2/SDL2Inc.h"
+#include "Graphics/DirectX/DXInc.h"
+
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nShowCmd) {
+    if (CSDL::Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
+    {
+        //printf("Error: %s\n", SDL_GetError());
+        return -1;
+    }
+
+    // From 2.0.18: Enable native IME.
+#ifdef SDL_HINT_IME_SHOW_UI
+    CSDL::SetHint(SDL_HINT_IME_SHOW_UI, "1");
+#endif
+
+    int32_t width = 1280;
+    int32_t height = 720;
+
+    // Setup window
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window* window = CSDL::CreateHWindow("SDL2+DirectX12", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
+    SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    CSDL::GetWindowWMInfo(window, &wmInfo);
+    HWND hwnd = (HWND)wmInfo.info.win.window;
+
+    DirectX::DX2DGlobals* dx = DirectX::DX2DGlobals::Instance();
+    if (dx->Init(hwnd)) {
+        bool done = false;
+        while (!done)
+        {
+            SDL_Event event;
+            while (CSDL::PollEvent(&event))
+            {
+                //ImGui_ImplSDL2_ProcessEvent(&event);
+                if (event.type == SDL_QUIT)
+                    done = true;
+                if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == CSDL::GetWindowID(window))
+                    done = true;
+            }
+
+            dx->BeginDraw();
+            dx->ClearScreen(0.0f,0.0f,0.3f);
+            for (int i = 0; i < 1000; i++) {
+                dx->DrawCircle(
+                    (rand() % width),
+                    (rand() % height),
+                    (rand() % 100),
+                    (rand() % 100) / 100.0f,
+                    (rand() % 100) / 100.0f,
+                    (rand() % 100) / 100.0f,
+                    (rand() % 100) / 100.0f
+                );
+            }
+            dx->EndDraw();
+            int x = 1;
+        }
+    }
+    DirectX::DX2DGlobals::Release();
+    CSDL::DestroyWindow(window);
+    CSDL::Quit();
+    return 0;
+}
+```
