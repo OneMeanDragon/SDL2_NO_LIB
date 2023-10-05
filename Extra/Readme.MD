@@ -24,7 +24,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI
-    CSDL::SetHint(SDL_HINT_IME_SHOW_UI, "1");
+    CSDL::SetHint(SDL_HINT_IME_SHOW_UI, "1"); // = CSDL::SetHint("SDL_IME_SHOW_UI", "1");
 #endif
 
     // Setup window
@@ -131,7 +131,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI
-    CSDL::SetHint(SDL_HINT_IME_SHOW_UI, "1");
+    CSDL::SetHint(SDL_HINT_IME_SHOW_UI, "1"); // = CSDL::SetHint("SDL_IME_SHOW_UI", "1");
 #endif
 
     int32_t width = 1280;
