@@ -139,7 +139,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     // Setup window
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = CSDL::CreateHWindow("SDL2+DirectX12", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
+    SDL_Window* window = CSDL::CreateHWindow("SDL2+Direct2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
     SDL_SysWMinfo wmInfo;
     SDL_VERSION(&wmInfo.version);
     CSDL::GetWindowWMInfo(window, &wmInfo);
