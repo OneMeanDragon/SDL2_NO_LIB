@@ -3,7 +3,7 @@ That may or may not have anything to do with SDL.
 
 ### DirectX12 + SDL
 ```cpp
-#define INCLUDE_DIRECTX12
+#define INCLUDE_DIRECTX12D3D
 #define INCLUDE_SDL2
 
 #define VC_EXTRALEAN
