@@ -1,4 +1,5 @@
 #include "DX2DGlobals.h"
+#include <cassert>
 
 namespace DirectX {
 
@@ -14,6 +15,7 @@ namespace DirectX {
 		}
 	}
 
+	// Statics
 	DX2DGlobals* DX2DGlobals::sInstance = nullptr;
 	DX2DGlobals* DX2DGlobals::Instance() {
 		if (sInstance == nullptr) { sInstance = new DX2DGlobals(); }
@@ -25,35 +27,46 @@ namespace DirectX {
 		sInstance = nullptr;
 	}
 
+	D2D1_SIZE_U DX2DGlobals::mWindowSize = {0};
+	HWND DX2DGlobals::mWindow = nullptr;
+	bool DX2DGlobals::SetWindow(HWND windowhandle) {
+		DX2DGlobals::mWindow = { windowhandle };
+		RECT client_rect{ 0 };
+		GetClientRect(DX2DGlobals::mWindow, &client_rect);
+		DX2DGlobals::mWindowSize = D2D1::SizeU(client_rect.right, client_rect.bottom);
+		return (DX2DGlobals::mWindow != nullptr);
+	}
+	// /End statics
+
 	DX2DGlobals::DX2DGlobals()
 		:
 		mFactory(nullptr),
 		mRenderTarget(nullptr),
 		mBrush(nullptr)
 	{
-		/* Initalize */
+		/* 
+			Initalize
+				1: could init the factory
+				2: can init the hwnd staticly (and then instance the class and init everything)
+				3: brush needs (2:) for a render target
+		*/
+		if (DX2DGlobals::mWindow != nullptr) { /* window handle must be set */
+			HRESULT res{ S_OK };
+			res = D2D1CreateFactory(D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, &mFactory);
+			assert(res == S_OK);
+			res = mFactory->CreateHwndRenderTarget(
+				D2D1::RenderTargetProperties(),
+				D2D1::HwndRenderTargetProperties(DX2DGlobals::mWindow, DX2DGlobals::mWindowSize),
+				&mRenderTarget);
+			assert(res == S_OK);
+			res = mRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), &mBrush);
+			assert(res == S_OK);
+		}
 	}
 	DX2DGlobals::~DX2DGlobals() {
 		SafeRelease(&mFactory);
 		SafeRelease(&mRenderTarget);
 		SafeRelease(&mBrush);
-	}
-
-	bool DX2DGlobals::Init(HWND hWnd) {
-		if (D2D1CreateFactory(D2D1_FACTORY_TYPE::D2D1_FACTORY_TYPE_SINGLE_THREADED, &mFactory) != S_OK) return false;
-		
-		RECT client_rect{ 0 };
-		GetClientRect(hWnd, &client_rect);
-
-		if (mFactory->CreateHwndRenderTarget(
-			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(hWnd, D2D1::SizeU(client_rect.right, client_rect.bottom)),
-			&mRenderTarget
-		) != S_OK) return false;
-
-		if (mRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), &mBrush) != S_OK) return false;
-
-		return true;
 	}
 
 	void DX2DGlobals::BeginDraw() {
