@@ -148,11 +148,16 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     CSDL::GetWindowWMInfo(window, &wmInfo);
     HWND hwnd = (HWND)wmInfo.info.win.window;
 
-    DirectX::DX2DGlobals* dx = DirectX::DX2DGlobals::Instance();
-    if (dx->Init(hwnd)) {
+#if defined(INCLUDE_DIRECT2D)
+    if (DirectX::DX2DGlobals::SetWindow(hwnd)) {
+        DirectX::DX2DGlobals* dx = DirectX::DX2DGlobals::Instance();
         bool done = false;
         while (!done)
         {
+#pragma region "EarlyUpdate()"
+            // update the current delta time, and input
+            // 
+            // Gather the Input data
             SDL_Event event;
             while (CSDL::PollEvent(&event))
             {
@@ -161,25 +166,40 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
                 if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == CSDL::GetWindowID(window))
                     done = true;
             }
+#pragma endregion
 
+#pragma region "Update(Delta)"
+            // Update via the DeltaTime
+#pragma endregion
+
+#pragma region "Begin Draw"
             dx->BeginDraw();
-            dx->ClearScreen(0.0f,0.0f,0.3f);
+            dx->ClearScreen(0.0f, 0.0f, 0.0f);
+#pragma endregion
+
+#pragma region "Render()"
             for (int i = 0; i < 1000; i++) {
                 dx->DrawCircle(
-                    (rand() % width),
-                    (rand() % height),
-                    (rand() % 100),
+                    (float)(rand() % width),
+                    (float)(rand() % height),
+                    (float)(rand() % 100),
                     (rand() % 100) / 100.0f,
                     (rand() % 100) / 100.0f,
                     (rand() % 100) / 100.0f,
                     (rand() % 100) / 100.0f
                 );
             }
+#pragma endregion
+
+#pragma region "End Draw"
             dx->EndDraw();
+#pragma endregion
             int x = 1;
         }
+        DirectX::DX2DGlobals::Release();
     }
-    DirectX::DX2DGlobals::Release();
+#endif
+
     CSDL::DestroyWindow(window);
     CSDL::Quit();
     return 0;
