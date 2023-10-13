@@ -194,7 +194,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 #pragma region "End Draw"
             dx->EndDraw();
 #pragma endregion
-            int x = 1;
+            int x = 1; /* just here for a break point for reasons read next lines */
 #pragma region "Frame Lock"
             // should be implemented unless you want your device to melt
 #pragma endregion
