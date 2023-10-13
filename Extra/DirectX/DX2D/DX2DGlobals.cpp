@@ -64,9 +64,13 @@ namespace DirectX {
 		}
 	}
 	DX2DGlobals::~DX2DGlobals() {
-		SafeRelease(&mFactory);
 		SafeRelease(&mRenderTarget);
 		SafeRelease(&mBrush);
+
+		/*
+			Once all other d2d resources are released
+		*/
+		SafeRelease(&mFactory);
 	}
 
 	void DX2DGlobals::BeginDraw() {
