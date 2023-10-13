@@ -195,6 +195,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             dx->EndDraw();
 #pragma endregion
             int x = 1;
+#pragma region "Frame Lock"
+            // should be implemented unless you want your device to melt
+#pragma endregion
         }
         DirectX::DX2DGlobals::Release();
     }
