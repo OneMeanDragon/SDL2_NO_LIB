@@ -2,6 +2,18 @@
 
 namespace DirectX {
 
+	namespace {
+		template<class Interface>
+		inline void SafeRelease(Interface** ppInterfaceToRelease)
+		{
+			if (*ppInterfaceToRelease != nullptr)
+			{
+				(*ppInterfaceToRelease)->Release();
+				(*ppInterfaceToRelease) = nullptr;
+			}
+		}
+	}
+
 	DX2DGlobals* DX2DGlobals::sInstance = nullptr;
 	DX2DGlobals* DX2DGlobals::Instance() {
 		if (sInstance == nullptr) { sInstance = new DX2DGlobals(); }
@@ -16,19 +28,15 @@ namespace DirectX {
 	DX2DGlobals::DX2DGlobals()
 		:
 		mFactory(nullptr),
-		mRenderTarget(nullptr)
+		mRenderTarget(nullptr),
+		mBrush(nullptr)
 	{
 		/* Initalize */
 	}
 	DX2DGlobals::~DX2DGlobals() {
-		if (mFactory != nullptr) {
-			mFactory->Release();
-			mFactory = nullptr;
-		}
-		if (mRenderTarget != nullptr) {
-			mRenderTarget->Release();
-			mRenderTarget = nullptr;
-		}
+		SafeRelease(&mFactory);
+		SafeRelease(&mRenderTarget);
+		SafeRelease(&mBrush);
 	}
 
 	bool DX2DGlobals::Init(HWND hWnd) {
@@ -42,6 +50,8 @@ namespace DirectX {
 			D2D1::HwndRenderTargetProperties(hWnd, D2D1::SizeU(client_rect.right, client_rect.bottom)),
 			&mRenderTarget
 		) != S_OK) return false;
+
+		if (mRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0), &mBrush) != S_OK) return false;
 
 		return true;
 	}
@@ -59,11 +69,8 @@ namespace DirectX {
 	}
 
 	void DX2DGlobals::DrawCircle(float x, float y, float rad, float r, float g, float b, float a) {
-		ID2D1SolidColorBrush* brush;
-		if (mRenderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush) == S_OK) {
-			mRenderTarget->DrawEllipse(D2D1::Ellipse(D2D1::Point2F(x, y), rad, rad), brush, 3.0f);
-			brush->Release();
-		}
+		mBrush->SetColor(D2D1::ColorF(r, g, b, a));
+		mRenderTarget->DrawEllipse(D2D1::Ellipse(D2D1::Point2F(x, y), rad, rad), mBrush, 3.0f);
 	}
 
 }
