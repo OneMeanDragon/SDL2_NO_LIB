@@ -2,7 +2,7 @@
 #define _DX2D_GLOBALS_HEADER
 #pragma once
 
-#pragma comment(lib, "D2D1.lib")
+#pragma comment(lib, "D2D1.lib") /* DirectX Direct2D */
 #include <d2d1_3.h>
 
 namespace DirectX {
@@ -22,14 +22,14 @@ namespace DirectX {
 	private:
 		ID2D1Factory* mFactory;
 		ID2D1HwndRenderTarget* mRenderTarget;
-
+		ID2D1SolidColorBrush* mBrush;
 	public:
 		bool Init(HWND hWnd);
 
 		void BeginDraw();
 		void EndDraw();
 		void ClearScreen(float r, float g, float b, float a = (1.0f));
-		void DrawCircle(float x, float y, float rad, float r, float g, float b, float a);
+		void DrawCircle(float x, float y, float rad, float r, float g, float b, float a = (1.0f));
 	};
 
 }
