@@ -2,6 +2,18 @@
 
 namespace DirectX {
 
+    namespace {
+        template<class Interface>
+        inline void SafeRelease(Interface** ppInterfaceToRelease)
+        {
+            if (*ppInterfaceToRelease != nullptr)
+            {
+                (*ppInterfaceToRelease)->Release();
+                (*ppInterfaceToRelease) = nullptr;
+            }
+        }
+    }
+
 	DX12Globals* DX12Globals::sInstance = nullptr;
 	DX12Globals* DX12Globals::Instance() {
 		if (sInstance == nullptr) { sInstance = new DX12Globals(); }
@@ -139,17 +151,17 @@ namespace DirectX {
     void DX12Globals::CleanupDeviceD3D()
     {
         CleanupRenderTarget();
-        if (g_pSwapChain) { g_pSwapChain->SetFullscreenState(false, nullptr); g_pSwapChain->Release(); g_pSwapChain = nullptr; }
+        if (g_pSwapChain) { g_pSwapChain->SetFullscreenState(false, nullptr); SafeRelease(&g_pSwapChain); }
         if (g_hSwapChainWaitableObject != nullptr) { CloseHandle(g_hSwapChainWaitableObject); }
         for (UINT i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
-            if (g_frameContext[i].CommandAllocator) { g_frameContext[i].CommandAllocator->Release(); g_frameContext[i].CommandAllocator = nullptr; }
-        if (g_pd3dCommandQueue) { g_pd3dCommandQueue->Release(); g_pd3dCommandQueue = nullptr; }
-        if (g_pd3dCommandList) { g_pd3dCommandList->Release(); g_pd3dCommandList = nullptr; }
-        if (g_pd3dRtvDescHeap) { g_pd3dRtvDescHeap->Release(); g_pd3dRtvDescHeap = nullptr; }
-        if (g_pd3dSrvDescHeap) { g_pd3dSrvDescHeap->Release(); g_pd3dSrvDescHeap = nullptr; }
-        if (g_fence) { g_fence->Release(); g_fence = nullptr; }
+            if (g_frameContext[i].CommandAllocator) { SafeRelease(&g_frameContext[i].CommandAllocator); }
+        if (g_pd3dCommandQueue) { SafeRelease(&g_pd3dCommandQueue); }
+        if (g_pd3dCommandList) { SafeRelease(&g_pd3dCommandList); }
+        if (g_pd3dRtvDescHeap) { SafeRelease(&g_pd3dRtvDescHeap); }
+        if (g_pd3dSrvDescHeap) { SafeRelease(&g_pd3dSrvDescHeap); }
+        if (g_fence) { SafeRelease(&g_fence); }
         if (g_fenceEvent) { CloseHandle(g_fenceEvent); g_fenceEvent = nullptr; }
-        if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
+        if (g_pd3dDevice) { SafeRelease(&g_pd3dDevice); }
 
 #ifdef DX12_ENABLE_DEBUG_LAYER
         IDXGIDebug1* pDebug = nullptr;
@@ -177,7 +189,7 @@ namespace DirectX {
         WaitForLastSubmittedFrame();
 
         for (UINT i = 0; i < NUM_BACK_BUFFERS; i++)
-            if (g_mainRenderTargetResource[i]) { g_mainRenderTargetResource[i]->Release(); g_mainRenderTargetResource[i] = nullptr; }
+            if (g_mainRenderTargetResource[i]) { SafeRelease(&g_mainRenderTargetResource[i]); }
     }
 
     void DX12Globals::WaitForLastSubmittedFrame()
