@@ -8,6 +8,11 @@
 namespace DirectX {
 
 	class DX2DGlobals {
+	private: /* Static objects from elsewhere */
+		static D2D1_SIZE_U mWindowSize;
+		static HWND mWindow;
+	public:
+		static bool SetWindow(HWND windowhandle);
 	private:
 		static DX2DGlobals* sInstance;
 	private:
@@ -24,8 +29,6 @@ namespace DirectX {
 		ID2D1HwndRenderTarget* mRenderTarget;
 		ID2D1SolidColorBrush* mBrush;
 	public:
-		bool Init(HWND hWnd);
-
 		void BeginDraw();
 		void EndDraw();
 		void ClearScreen(float r, float g, float b, float a = (1.0f));
