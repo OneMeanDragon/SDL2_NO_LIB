@@ -33,7 +33,7 @@ namespace DirectX {
 		DX2DGlobals::mWindow = { windowhandle };
 		RECT client_rect{ 0 };
 		GetClientRect(DX2DGlobals::mWindow, &client_rect);
-		DX2DGlobals::mWindowSize = D2D1::SizeU(client_rect.right, client_rect.bottom);
+		DX2DGlobals::mWindowSize = D2D1::SizeU(client_rect.right - client_rect.left, client_rect.bottom - client_rect.top);
 		return (DX2DGlobals::mWindow != nullptr);
 	}
 	// /End statics
