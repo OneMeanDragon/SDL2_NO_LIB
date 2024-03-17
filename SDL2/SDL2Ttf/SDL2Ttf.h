@@ -34,6 +34,17 @@ typedef TTF_Font* (*ttf_openfont_t)(const char* file, int32_t ptsize);
 #define TTF_OPENFONTRW_FUNCTION "TTF_OpenFontRW"
 typedef TTF_Font* (*ttf_openfontrw_t)(SDL_RWops* src, int freesrc, int ptsize);
 
+//
+#define TTF_RENDERTEXTBLENDED_FUNCTION "TTF_RenderText_Blended"
+typedef SDL_Surface* (*ttf_rendertextblended_t)(TTF_Font* font, const char* text, SDL_Color fg);
+
+//
+#define TTF_FONTHEIGHT_FUNCTION "TTF_FontHeight"
+typedef int32_t (*ttf_fontheight_t)(const TTF_Font* font);
+#define TTF_SIZETEXT_FUNCTION "TTF_SizeText"
+typedef int32_t(*ttf_sizetext_t)(TTF_Font* font, const char* text, int* w, int* h);
+
+
 class CTTF {
 private:
 	static CTTF* sInstance;
@@ -46,7 +57,7 @@ private:
 	~CTTF();
 
 public:
-	CTTF(const CTTF& obj) = delete;       /* Remove the copy constructor */
+	CTTF(const CTTF& obj)       = delete; /* Remove the copy constructor    */
 	void operator=(const CTTF&) = delete; /* Remove the assignment operator */
 public:
 	static bool IsInitialized;
@@ -65,6 +76,11 @@ public:
 	static SDL_Surface* RenderText_Solid(TTF_Font* font, const char* text, SDL_Color fg);
 	static SDL_Surface* RenderUNICODE_Solid(TTF_Font* font, const wchar_t* text, SDL_Color fg);
 
+	static SDL_Surface* RenderText_Blended(TTF_Font* font, const char* text, SDL_Color fg);
+
+	static int32_t FontHeight(const TTF_Font* font);
+	static int32_t SizeText(TTF_Font* font, const char* text, int* w, int* h);
+
 private:
 	sdl_ttfinit_t TTF_Init = nullptr;
 	sdl_quit_t TTF_Quit = nullptr;
@@ -74,6 +90,11 @@ private:
 	ttf_openfontrw_t TTF_OpenFontRW = nullptr;
 	sdl_rendertext_solid_t TTF_RenderText_Solid = nullptr;
 	sdl_renderunicode_solid_t TTF_RenderUNICODE_Solid = nullptr;
+
+	ttf_rendertextblended_t TTF_RenderText_Blended = nullptr;
+
+	ttf_fontheight_t TTF_FontHeight = nullptr;
+	ttf_sizetext_t TTF_SizeText = nullptr;
 
 private:
 	HINSTANCE TTF_LOADED_DLL;

@@ -6,13 +6,12 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-
 #include <libloaderapi.h>
 #include <cinttypes>
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL_syswm.h>
+#include <SDL_syswm.h> /* SDL_GetWindowID */
 
 
 #define SDL_MAIN_DLL TEXT("SDL2.DLL")
@@ -93,6 +92,9 @@ typedef int32_t(*sdl_setsurfacecolormod_t)(SDL_Surface* surface, uint8_t r, uint
 typedef int32_t(*sdl_setsurfacealphamod_t)(SDL_Surface* surface, uint8_t alpha);
 #define SDL_UPPERBLIT_FUNCTION "SDL_UpperBlit"
 typedef int32_t(*sdl_upperblit_t)(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
+#define SDL_CREATERGBSURFACEWITHFORMATFROM_FUNCTION "SDL_CreateRGBSurfaceWithFormatFrom"
+typedef SDL_Surface* (*sdl_creatergbsurfacewithformatfrom_t)(void* pixels, int width, int height, int depth, int pitch, Uint32 format);
+
 
 /* rects */
 #define SDL_FILLRECT_FUNCTION "SDL_FillRect"
@@ -116,6 +118,8 @@ typedef void(*sdl_unlocktexture_t)(SDL_Texture* texture);
 
 
 // Events
+#define SDL_WAITEVENT_FUNCTION "SDL_WaitEvent"
+typedef int32_t(*sdl_waitevent_t)(SDL_Event* evnt);
 #define SDL_PUSHEVENT_FUNCTION "SDL_PushEvent"
 typedef int32_t(*sdl_pushevent_t)(SDL_Event* evnt);
 
@@ -131,6 +135,17 @@ typedef SDL_Cursor*(*sdl_createsystemcursor_t)(SDL_SystemCursor id);
 #define SDL_SHOWCURSOR_FUNCTION "SDL_ShowCursor"
 typedef int32_t(*sdl_showcursor_t)(int32_t toggle);
 
+// Clipboard
+#define SDL_SETCLIPBOARDTEXT_FUNCTION "SDL_SetClipboardText"
+typedef int32_t(*sdl_setclipboardtext_t)(const char* text);
+
+
+#define SDL_GETWINDOWSIZE_FUNCTION "SDL_GetWindowSize"
+typedef void(*sdl_getwindowsize_t)(SDL_Window* window, int* w, int* h);
+
+
+#define SDL_SAVEBMPRW_FUNCTION "SDL_SaveBMP_RW"
+typedef int32_t(*sdl_savebmprw_t)(SDL_Surface* surface, SDL_RWops* dst, int freedst);
 
 
 typedef int32_t(*sdl_init_t)(uint32_t flags);
@@ -168,11 +183,20 @@ typedef int32_t(*sdl_getnumrenderdrivers_t)(void);
 typedef int32_t(*sdl_getnumrenderdriverinfo_t)(int32_t index, SDL_RendererInfo* info);
 #define SDL_SETRENDERTARGET_FUNCTION "SDL_SetRenderTarget"
 typedef int32_t(*sdl_setrendertarget_t)(SDL_Renderer* renderer, SDL_Texture* texture);
+#define SDL_GETRENDEROUTPUTSIZE_FUNCTION "SDL_GetRendererOutputSize"
+typedef int32_t(*sdl_getrendereroutputsize_t)(SDL_Renderer* renderer, int* w, int* h);
+#define SDL_SETTEXTURECOLORMOD_FUNCTION "SDL_SetTextureColorMod"
+typedef int32_t(*sdl_settexturecolormod_t)(SDL_Texture* texture, Uint8 r, Uint8 g, Uint8 b);
+#define SDL_RENDERREADPIXELS_FUNCTION "SDL_RenderReadPixels"
+typedef int32_t(*sdl_rendererreadpixels_t)(SDL_Renderer* renderer, const SDL_Rect* rect, Uint32 format, void* pixels, int pitch);
+#define SDL_RENDERDRAWRECT_FUNCTION "SDL_RenderDrawRect"
+typedef int32_t(*sdl_rendererdrawrect_t)(SDL_Renderer* renderer, const SDL_Rect* rect);
 
 // Memory functions
 typedef SDL_RWops* (*sdl_rwfromfile_t)(const char* file, const char* mode);
 typedef SDL_RWops* (*sdl_rwfrommem_t)(void* mem, int size);
 typedef SDL_RWops* (*sdl_rwfromconstmem_t)(const void* mem, int size);
+
 
 class CSDL {
 private:
@@ -225,18 +249,24 @@ public:
 	static int32_t GetNumRenderDrivers(void);
 	static int32_t GetRenderDriverInfo(int32_t index, SDL_RendererInfo* info);
 	static int32_t SetRenderTarget(SDL_Renderer* renderer, SDL_Texture* texture);
+	static int32_t GetRendererOutputSize(SDL_Renderer* renderer, int* w, int* h);
+	static int32_t SetTextureColorMod(SDL_Texture* texture, Uint8 r, Uint8 g, Uint8 b);
+	static int32_t RenderReadPixels(SDL_Renderer* renderer, const SDL_Rect* rect, Uint32 format, void* pixels, int pitch);
+	static int32_t RenderDrawRect(SDL_Renderer* renderer, const SDL_Rect* rect);
 
 	// Memory func
 	static SDL_RWops* RWFromFile(const char* file, const char* mode);
 	static SDL_RWops* RWFromMem(void* mem, int size);
 	static SDL_RWops* RWFromConstMem(const void* mem, int size);
 	static void FreeRW(SDL_RWops* area);
+	static void RWclose(SDL_RWops* ctx);
 
 	// Window
 	static SDL_Window* CreateHWindow(const char* title, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t flags);
 	static void DestroyWindow(SDL_Window* window);
 	static uint32_t GetWindowFlags(SDL_Window* window);
 	static int32_t SetWindowFullscreen(SDL_Window* window, uint32_t flags);
+	static void GetWindowSize(SDL_Window* window, int* w, int* h);
 
 	// Surfaces
 	static SDL_Surface* CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth, Uint32 format);
@@ -245,7 +275,7 @@ public:
 	static int32_t SetSurfaceAlphaMod(SDL_Surface* surface, uint8_t alpha);
 	static int32_t UpperBlit(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 	static int32_t BlitSurface(SDL_Surface* src, const SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
-
+	static SDL_Surface* CreateRGBSurfaceWithFormatFrom(void* pixels, int width, int height, int depth, int pitch, Uint32 format);
 
 	// Rect
 	static int32_t FillRect(SDL_Surface* dst, const SDL_Rect* rect, uint32_t color);
@@ -261,6 +291,7 @@ public:
 	static void UnlockTexture(SDL_Texture* texture);
 
 	// Events
+	static int32_t WaitEvent(SDL_Event* evnt);
 	static int32_t PushEvent(SDL_Event* evnt);
 
 	// Cursor
@@ -275,7 +306,18 @@ public:
 	static SDL_bool GetWindowWMInfo(SDL_Window* window, SDL_SysWMinfo* info);
 	static uint32_t GetWindowID(SDL_Window* window);
 
+	// Clipboard
+	static int32_t SetClipboardText(const char* text);
 
+	// Math macros...
+	static int32_t BYTESPERPIXEL(int32_t value);
+	static int32_t BITSPERPIXEL(int32_t value);
+
+	static int32_t SaveBMP_RW(SDL_Surface* surface, SDL_RWops* dst, int freedst);
+
+	static int32_t SaveBMP(SDL_Surface* sur, const char* file);
+
+	static void Log(const char *fmt, ...);
 private:
 	/* SDL2 Initialization calls */
 	sdl_init_t SDL_Init = nullptr;
@@ -303,11 +345,16 @@ private:
 	sdl_getperformancecounter_t SDL_GetPerformanceCounter = nullptr;
 	sdl_getperformancefrequency_t SDL_GetPerformanceFrequency = nullptr;
 	sdl_delay_t SDL_Delay = nullptr;
+
 	//renderer inits
 	sdl_createrenderer_t SDL_CreateRenderer = nullptr;
 	sdl_getnumrenderdrivers_t SDL_GetNumRenderDrivers = nullptr;
 	sdl_getnumrenderdriverinfo_t SDL_GetRenderDriverInfo = nullptr;
 	sdl_setrendertarget_t SDL_SetRenderTarget = nullptr;
+	sdl_getrendereroutputsize_t SDL_GetRendererOutputSize = nullptr;
+	sdl_settexturecolormod_t SDL_SetTextureColorMod = nullptr;
+	sdl_rendererreadpixels_t SDL_RenderReadPixels = nullptr;
+	sdl_rendererdrawrect_t SDL_RenderDrawRect = nullptr;
 
 	//memory func
 	sdl_rwfromfile_t SDL_RWFromFile = nullptr;
@@ -320,12 +367,16 @@ private:
 	sdl_destroywindow_t SDL_DestroyWindow = nullptr;
 	sdl_getwindowflags_t SDL_GetWindowFlags = nullptr;
 	sdl_setwindowfullscreen_t SDL_SetWindowFullscreen = nullptr;
+	sdl_getwindowsize_t SDL_GetWindowSize = nullptr;
+
 	// Surfaces
 	sdl_creatergbsurfacewithformat_t SDL_CreateRGBSurfaceWithFormat = nullptr;
 	sdl_creatergbsurface_t SDL_CreateRGBSurface = nullptr;
 	sdl_setsurfacecolormod_t SDL_SetSurfaceColorMod = nullptr;
 	sdl_setsurfacealphamod_t SDL_SetSurfaceAlphaMod = nullptr;
 	sdl_upperblit_t SDL_UpperBlit = nullptr;
+	sdl_creatergbsurfacewithformatfrom_t SDL_CreateRGBSurfaceWithFormatFrom = nullptr;
+
 
 	// Rect
 	sdl_fillrect_t SDL_FillRect = nullptr;
@@ -339,7 +390,9 @@ private:
 	sdl_unlocktexture_t SDL_UnlockTexture = nullptr;
 
 	// Events
+	sdl_waitevent_t SDL_WaitEvent = nullptr;
 	sdl_pushevent_t SDL_PushEvent = nullptr;
+
 	// Cursor
 	sdl_getcursor_t SDL_GetCursor = nullptr;
 	sdl_setcursor_t SDL_SetCursor = nullptr;
@@ -352,6 +405,11 @@ private:
 	sdl_getwindowwminfo_t SDL_GetWindowWMInfo = nullptr;
 	sdl_getwindowid_t SDL_GetWindowID = nullptr;
 
+	// Clipboard
+	sdl_setclipboardtext_t SDL_SetClipboardText = nullptr;
+
+	// bmp
+	sdl_savebmprw_t SDL_SaveBMP_RW = nullptr;
 
 private:
 	HINSTANCE SDL_LOADED_DLL;

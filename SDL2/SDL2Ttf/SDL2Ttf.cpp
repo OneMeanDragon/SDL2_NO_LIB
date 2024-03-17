@@ -39,6 +39,11 @@ CTTF::CTTF() {
 		TTF_RenderText_Solid = (sdl_rendertext_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERTEXT_SOLID_FUNCTION);
 		TTF_RenderUNICODE_Solid = (sdl_renderunicode_solid_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERUNICODE_SOLID_FUNCTION);
 
+		TTF_RenderText_Blended = (ttf_rendertextblended_t)GetProcAddress(TTF_LOADED_DLL, TTF_RENDERTEXTBLENDED_FUNCTION);
+
+		TTF_FontHeight = (ttf_fontheight_t)GetProcAddress(TTF_LOADED_DLL, TTF_FONTHEIGHT_FUNCTION);
+		TTF_SizeText = (ttf_sizetext_t)GetProcAddress(TTF_LOADED_DLL, TTF_SIZETEXT_FUNCTION);
+
 		IsInitialized = true;
 	}
 }
@@ -87,6 +92,18 @@ SDL_Surface* CTTF::RenderText_Solid(TTF_Font* font, const char* text, SDL_Color 
 
 SDL_Surface* CTTF::RenderUNICODE_Solid(TTF_Font* font, const wchar_t* text, SDL_Color fg) {
 	return Instance()->TTF_RenderUNICODE_Solid(font, text, fg);
+}
+
+SDL_Surface* CTTF::RenderText_Blended(TTF_Font* font, const char* text, SDL_Color fg) {
+	return Instance()->TTF_RenderText_Blended(font, text, fg);
+}
+
+int32_t CTTF::FontHeight(const TTF_Font* font) {
+	return Instance()->TTF_FontHeight(font);
+}
+
+int32_t CTTF::SizeText(TTF_Font* font, const char* text, int* w, int* h) {
+	return Instance()->TTF_SizeText(font, text, w, h);
 }
 
 #pragma endregion // End SDL2_TTF.DLL

@@ -62,6 +62,11 @@ CSDL::CSDL() {
 		SDL_GetNumRenderDrivers = (sdl_getnumrenderdrivers_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETNUMRENDERDRIVERS_FUNCTION);
 		SDL_GetRenderDriverInfo = (sdl_getnumrenderdriverinfo_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETNUMRENDERDRIVERINFO_FUNCTION);
 		SDL_SetRenderTarget = (sdl_setrendertarget_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETRENDERTARGET_FUNCTION);
+		SDL_GetRendererOutputSize = (sdl_getrendereroutputsize_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETRENDEROUTPUTSIZE_FUNCTION);
+		SDL_SetTextureColorMod = (sdl_settexturecolormod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETTEXTURECOLORMOD_FUNCTION);
+		SDL_RenderReadPixels = (sdl_rendererreadpixels_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERREADPIXELS_FUNCTION);
+		SDL_RenderDrawRect = (sdl_rendererdrawrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_RENDERDRAWRECT_FUNCTION);
+
 
 		// Memory Func
 		SDL_RWFromFile = (sdl_rwfromfile_t)GetProcAddress(SDL_LOADED_DLL, SDL_RWFROMFILE_FUNCTION);
@@ -74,6 +79,7 @@ CSDL::CSDL() {
 		SDL_DestroyWindow = (sdl_destroywindow_t)GetProcAddress(SDL_LOADED_DLL, SDL_DESTROYWINDOW_FUNCTION);
 		SDL_GetWindowFlags = (sdl_getwindowflags_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETWINDOWFLAGS_FUNCTION);
 		SDL_SetWindowFullscreen = (sdl_setwindowfullscreen_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETWINDOWFULLSCREEN_FUNCTION);
+		SDL_GetWindowSize = (sdl_getwindowsize_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETWINDOWSIZE_FUNCTION);
 
 		// Surfaces
 		//SDL_CreateSurface() SDL3 only apparently
@@ -82,7 +88,8 @@ CSDL::CSDL() {
 		SDL_SetSurfaceColorMod = (sdl_setsurfacecolormod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETSURFACECOLORMOD_FUNCTION);
 		SDL_SetSurfaceAlphaMod = (sdl_setsurfacealphamod_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETSURFACEALPHAMOD_FUNCTION);
 		SDL_UpperBlit = (sdl_upperblit_t)GetProcAddress(SDL_LOADED_DLL, SDL_UPPERBLIT_FUNCTION);
-		
+		SDL_CreateRGBSurfaceWithFormatFrom = (sdl_creatergbsurfacewithformatfrom_t)GetProcAddress(SDL_LOADED_DLL, SDL_CREATERGBSURFACEWITHFORMATFROM_FUNCTION);
+
 		//Rects
 		SDL_FillRect = (sdl_fillrect_t)GetProcAddress(SDL_LOADED_DLL, SDL_FILLRECT_FUNCTION);
 
@@ -96,8 +103,8 @@ CSDL::CSDL() {
 		SDL_LockTexture = (sdl_locktexture_t)GetProcAddress(SDL_LOADED_DLL, SDL_LOCKTEXTURE_FUNCTION);
 		SDL_UnlockTexture = (sdl_unlocktexture_t)GetProcAddress(SDL_LOADED_DLL, SDL_UNLOCKTEXTURE_FUNCTION);
 
-
 		// Event
+		SDL_WaitEvent = (sdl_waitevent_t)GetProcAddress(SDL_LOADED_DLL, SDL_WAITEVENT_FUNCTION);
 		SDL_PushEvent = (sdl_pushevent_t)GetProcAddress(SDL_LOADED_DLL, SDL_PUSHEVENT_FUNCTION);
 
 		// Cursor
@@ -111,6 +118,13 @@ CSDL::CSDL() {
 		SDL_SetHint = (sdl_sethint_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETHINT_FUNCTION);
 		SDL_GetWindowWMInfo = (sdl_getwindowwminfo_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETWINDOWWMINFO_FUNCTION);
 		SDL_GetWindowID = (sdl_getwindowid_t)GetProcAddress(SDL_LOADED_DLL, SDL_GETWINDOWID_FUNCTION);
+
+		// Clipboard
+		SDL_SetClipboardText = (sdl_setclipboardtext_t)GetProcAddress(SDL_LOADED_DLL, SDL_SETCLIPBOARDTEXT_FUNCTION);
+
+		// bmp
+		SDL_SaveBMP_RW = (sdl_savebmprw_t)GetProcAddress(SDL_LOADED_DLL, SDL_SAVEBMPRW_FUNCTION);
+
 
 		IsInitialized = true;
 	}
@@ -269,6 +283,11 @@ uint32_t CSDL::GetWindowFlags(SDL_Window* window) {
 int32_t CSDL::SetWindowFullscreen(SDL_Window* window, uint32_t flags) {
 	return Instance()->SDL_SetWindowFullscreen(window, flags);
 }
+
+void CSDL::GetWindowSize(SDL_Window* window, int* w, int* h) {
+	return Instance()->SDL_GetWindowSize(window, w, h);
+}
+
 #pragma endregion
 
 
@@ -290,6 +309,19 @@ int32_t CSDL::GetRenderDriverInfo(int32_t index, SDL_RendererInfo* info) {
 int32_t CSDL::SetRenderTarget(SDL_Renderer* renderer, SDL_Texture* texture) {
 	return Instance()->SDL_SetRenderTarget(renderer, texture);
 }
+
+int32_t CSDL::SetTextureColorMod(SDL_Texture* texture, Uint8 r, Uint8 g, Uint8 b) {
+	return Instance()->SDL_SetTextureColorMod(texture, r, g, b);
+}
+
+int32_t CSDL::RenderReadPixels(SDL_Renderer* renderer, const SDL_Rect* rect, Uint32 format, void* pixels, int pitch) {
+	return Instance()->SDL_RenderReadPixels(renderer, rect, format, pixels, pitch);
+}
+
+int32_t CSDL::RenderDrawRect(SDL_Renderer* renderer, const SDL_Rect* rect) {
+	return Instance()->SDL_RenderDrawRect(renderer, rect);
+}
+
 #pragma endregion
 
 
@@ -373,6 +405,10 @@ SDL_Texture* CSDL::CreateTexture(SDL_Renderer* renderer, Uint32 format, int acce
 #pragma endregion
 
 #pragma region "Events"
+int32_t CSDL::WaitEvent(SDL_Event* evnt) {
+	return Instance()->SDL_WaitEvent(evnt);
+}
+
 int32_t CSDL::PushEvent(SDL_Event* evnt) {
 	return Instance()->SDL_PushEvent(evnt);
 }
@@ -408,4 +444,61 @@ uint32_t CSDL::GetWindowID(SDL_Window* window) {
 }
 #pragma endregion
 
+#pragma region "Clipboard"
+
+int32_t CSDL::SetClipboardText(const char* text) {
+	return Instance()->SDL_SetClipboardText(text);
+}
+
+#pragma endregion
+
+#pragma region "Renderer"
+
+int32_t CSDL::GetRendererOutputSize(SDL_Renderer* renderer, int* w, int* h) {
+	return Instance()->SDL_GetRendererOutputSize(renderer, w, h);
+}
+
+#pragma endregion
+
+void CSDL::RWclose(SDL_RWops* ctx) {
+	ctx->close(ctx);
+}
+
+//
+int32_t CSDL::BYTESPERPIXEL(int32_t value) {
+	return ((SDL_ISPIXELFORMAT_FOURCC(value) ? ((((value) == SDL_PIXELFORMAT_YUY2) || ((value) == SDL_PIXELFORMAT_UYVY) || ((value) == SDL_PIXELFORMAT_YVYU)) ? 2 : 1) : (((value) >> 0) & 0xFF)));
+}
+
+int32_t CSDL::BITSPERPIXEL(int32_t value) {
+	return (((value) >> 8) & 0xFF);
+}
+
+
+int32_t CSDL::SaveBMP_RW(SDL_Surface* surface, SDL_RWops* dst, int freedst) {
+	return Instance()->SDL_SaveBMP_RW(surface, dst, freedst);
+}
+
+int32_t CSDL::SaveBMP(SDL_Surface* sur, const char* file) {
+	return Instance()->SaveBMP_RW(sur, Instance()->SDL_RWFromFile(file, "wb"), 1);
+}
+
+void CSDL::Log(const char* fmt, ...) {
+	/*
+		format this at some point, or add SDL_Log();
+	*/
+}
+
+SDL_Surface* CSDL::CreateRGBSurfaceWithFormatFrom(void* pixels, int width, int height, int depth, int pitch, Uint32 format) {
+	return Instance()->SDL_CreateRGBSurfaceWithFormatFrom(pixels, width, height, depth, pitch, format);
+}
+
+/*
+// Renderer
+extern DECLSPEC int SDLCALL SDL_RenderDrawRect(SDL_Renderer * renderer, const SDL_Rect * rect);
+// Surface
+
+*/
+
+void asdf() {
+}
 #pragma endregion // End SDL2.DLL
