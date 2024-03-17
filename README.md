@@ -5,7 +5,7 @@ SDL2 Singleton Class's, to remove the the need to include the ".LIB" files.
 if your looking for a specific function add it
  - Functionality needed to run with:
    - Currently what I actually use from the SDL2 dlls.
-   - [SDLUI](https://github.com/immortalx74/SDLUI)
+   - [SDLUI](https://github.com/immortalx74/SDLUI) (if this ever is not the case, then i may not have seen an update to this project)
 
 ## Info
 You must still follow the SDL rules, Each of the classes need to be initalized in the same thread.
